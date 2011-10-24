@@ -7,3 +7,17 @@ SCD: Effective Ionisation Coefficients
 
 ADF11 File: scd96_c.dat
 Software libraries: xxdata_11.tar.gz
+
+
+Compiling python extension module
+---------------------------------
+
+in the ./xxdata_11 subdirectory, create the signature file:
+
+    $ f2py -m xxdata_11 -h xxdata_11.pyf xxdata_11.for xxrptn.for i4unit.for\
+        i4fctn.for xxword.for xxcase.for xfelem.for xxslen.for\
+        only: xxdata_11
+
+Compile the extension module:
+
+    $ f2py -c -m xxdata_11 xxdata_11.pyf
