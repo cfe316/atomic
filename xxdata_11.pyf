@@ -1,44 +1,44 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
 
-python module xxdata_11 ! in 
+python module _xxdata_11 ! in
     interface  ! in :xxdata_11
         subroutine xxdata_11(iunit,iclass,isdimd,iddimd,itdimd,ndptnl,ndptn,ndptnc,ndcnct,iz0,is1min,is1max,nptnl,nptn,nptnc,iptnla,iptna,iptnca,ncnct,icnctv,iblmx,ismax,dnr_ele,dnr_ams,isppr,ispbr,isstgr,idmax,itmax,ddens,dtev,drcof,lres,lstan,lptn) ! in :xxdata_11:xxdata_11.for
-            integer :: iunit
-            integer :: iclass
-            integer optional,check(len(isppr)>=isdimd),depend(isppr) :: isdimd=len(isppr)
-            integer optional,check(len(ddens)>=iddimd),depend(ddens) :: iddimd=len(ddens)
-            integer optional,check(len(dtev)>=itdimd),depend(dtev) :: itdimd=len(dtev)
-            integer optional,check(len(nptn)>=ndptnl),depend(nptn) :: ndptnl=len(nptn)
-            integer optional,check(shape(nptnc,1)==ndptn),depend(nptnc) :: ndptn=shape(nptnc,1)
-            integer optional,check(shape(iptnca,2)==ndptnc),depend(iptnca) :: ndptnc=shape(iptnca,2)
-            integer optional,check(len(icnctv)>=ndcnct),depend(icnctv) :: ndcnct=len(icnctv)
-            integer :: iz0
-            integer :: is1min
-            integer :: is1max
-            integer :: nptnl
-            integer dimension(ndptnl) :: nptn
-            integer dimension(ndptnl,ndptn),depend(ndptnl) :: nptnc
-            integer dimension(ndptnl),depend(ndptnl) :: iptnla
-            integer dimension(ndptnl,ndptn),depend(ndptnl,ndptn) :: iptna
-            integer dimension(ndptnl,ndptn,ndptnc),depend(ndptnl,ndptn) :: iptnca
-            integer :: ncnct
-            integer dimension(ndcnct) :: icnctv
-            integer :: iblmx
-            integer :: ismax
-            character*12 :: dnr_ele
-            real*8 :: dnr_ams
-            integer dimension(isdimd) :: isppr
-            integer dimension(isdimd),depend(isdimd) :: ispbr
-            integer dimension(isdimd),depend(isdimd) :: isstgr
-            integer :: idmax
-            integer :: itmax
-            real*8 dimension(iddimd) :: ddens
-            real*8 dimension(itdimd) :: dtev
-            real*8 dimension(isdimd,itdimd,iddimd),depend(isdimd,itdimd,iddimd) :: drcof
-            logical :: lres
-            logical :: lstan
-            logical :: lptn
+            integer, intent(in) :: iunit
+            integer, intent(in) :: iclass
+            integer, intent(in), :: isdimd
+            integer, intent(in), :: iddimd
+            integer, intent(in), :: itdimd
+            integer, intent(in), :: ndptnl
+            integer, intent(in)  :: ndptn
+            integer, intent(in), :: ndptnc
+            integer, intent(in)  :: ndcnct
+            integer, intent(out) :: iz0
+            integer, intent(out) :: is1min
+            integer, intent(out) :: is1max
+            integer, intent(out) :: nptnl
+            integer, intent(out), dimension(ndptnl) :: nptn
+            integer, intent(out), dimension(ndptnl,ndptn),depend(ndptnl) :: nptnc
+            integer, intent(out), dimension(ndptnl),depend(ndptnl) :: iptnla
+            integer, intent(out), dimension(ndptnl,ndptn),depend(ndptnl,ndptn) :: iptna
+            integer, intent(out), dimension(ndptnl,ndptn,ndptnc),depend(ndptnl,ndptn) :: iptnca
+            integer, intent(out) :: ncnct
+            integer, intent(out), dimension(ndcnct) :: icnctv
+            integer, intent(out) :: iblmx
+            integer, intent(out) :: ismax
+            character*12, intent(out) :: dnr_ele
+            real*8, intent(out) :: dnr_ams
+            integer, intent(out), dimension(isdimd) :: isppr
+            integer, intent(out), dimension(isdimd),depend(isdimd) :: ispbr
+            integer, intent(out), dimension(isdimd),depend(isdimd) :: isstgr
+            integer, intent(out) :: idmax
+            integer, intent(out) :: itmax
+            real*8, intent(out), dimension(iddimd) :: ddens
+            real*8, intent(out), dimension(itdimd) :: dtev
+            real*8, intent(out), dimension(isdimd,itdimd,iddimd),depend(isdimd,itdimd,iddimd) :: drcof
+            logical, intent(out) :: lres
+            logical, intent(out) :: lstan
+            logical, intent(out) :: lptn
         end subroutine xxdata_11
     end interface 
 end python module xxdata_11
