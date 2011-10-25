@@ -40,3 +40,6 @@ def convert_to_dictionary(out):
 if __name__ == '__main__':
     out = read_scd('scd96_c.dat')
     d = convert_to_dictionary(out)
+
+    from scipy.interpolate import RectBivariateSpline
+    coeffs = RectBivariateSpline(d['temperature'], d['density'], d['coeff_table'][0])
