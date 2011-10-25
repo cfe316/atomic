@@ -1,0 +1,47 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module xxdata_11 ! in 
+    interface  ! in :xxdata_11
+        subroutine xxdata_11(iunit,iclass,isdimd,iddimd,itdimd,ndptnl,ndptn,ndptnc,ndcnct,iz0,is1min,is1max,nptnl,nptn,nptnc,iptnla,iptna,iptnca,ncnct,icnctv,iblmx,ismax,dnr_ele,dnr_ams,isppr,ispbr,isstgr,idmax,itmax,ddens,dtev,drcof,lres,lstan,lptn) ! in :xxdata_11:xxdata_11.for
+            integer :: iunit
+            integer :: iclass
+            integer optional,check(len(isppr)>=isdimd),depend(isppr) :: isdimd=len(isppr)
+            integer optional,check(len(ddens)>=iddimd),depend(ddens) :: iddimd=len(ddens)
+            integer optional,check(len(dtev)>=itdimd),depend(dtev) :: itdimd=len(dtev)
+            integer optional,check(len(nptn)>=ndptnl),depend(nptn) :: ndptnl=len(nptn)
+            integer optional,check(shape(nptnc,1)==ndptn),depend(nptnc) :: ndptn=shape(nptnc,1)
+            integer optional,check(shape(iptnca,2)==ndptnc),depend(iptnca) :: ndptnc=shape(iptnca,2)
+            integer optional,check(len(icnctv)>=ndcnct),depend(icnctv) :: ndcnct=len(icnctv)
+            integer :: iz0
+            integer :: is1min
+            integer :: is1max
+            integer :: nptnl
+            integer dimension(ndptnl) :: nptn
+            integer dimension(ndptnl,ndptn),depend(ndptnl) :: nptnc
+            integer dimension(ndptnl),depend(ndptnl) :: iptnla
+            integer dimension(ndptnl,ndptn),depend(ndptnl,ndptn) :: iptna
+            integer dimension(ndptnl,ndptn,ndptnc),depend(ndptnl,ndptn) :: iptnca
+            integer :: ncnct
+            integer dimension(ndcnct) :: icnctv
+            integer :: iblmx
+            integer :: ismax
+            character*12 :: dnr_ele
+            real*8 :: dnr_ams
+            integer dimension(isdimd) :: isppr
+            integer dimension(isdimd),depend(isdimd) :: ispbr
+            integer dimension(isdimd),depend(isdimd) :: isstgr
+            integer :: idmax
+            integer :: itmax
+            real*8 dimension(iddimd) :: ddens
+            real*8 dimension(itdimd) :: dtev
+            real*8 dimension(isdimd,itdimd,iddimd),depend(isdimd,itdimd,iddimd) :: drcof
+            logical :: lres
+            logical :: lstan
+            logical :: lptn
+        end subroutine xxdata_11
+    end interface 
+end python module xxdata_11
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
