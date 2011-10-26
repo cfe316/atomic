@@ -46,14 +46,14 @@ ax = plt.gca()
 ax.loglog(temperature, y.T)
 
 ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
-ax.set_ylim(0.05, 1)
+ax.set_ylim(0.05, 1.5)
 
 max_pos = y.argmax(axis=-1)
 for i in xrange(nuclear_charge+1):
     index = max_pos[i]
     xy = temperature[index], y[i, index]
     s = '$%d$' % (i+1,)
-    ax.annotate(s, xy, ha='center', va='top')
+    ax.annotate(s, xy, ha='center')
 
 
 plt.draw()
