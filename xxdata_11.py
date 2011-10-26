@@ -2,8 +2,8 @@ import os
 import _xxdata_11
 
 adf11_classes = {
-    'acd' : 1,
-    'scd' : 2,
+    'acd' : 1, # recombination coefficients
+    'scd' : 2, # ionisation coefficients
 }
 
 parameters = {
@@ -58,6 +58,3 @@ def convert_to_dictionary(out):
 if __name__ == '__main__':
     out = read_scd('scd96_c.dat')
     d = convert_to_dictionary(out)
-
-    from scipy.interpolate import RectBivariateSpline
-    coeffs = RectBivariateSpline(d['temperature'], d['density'], d['coeff_table'][0])
