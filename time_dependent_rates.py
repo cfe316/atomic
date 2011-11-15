@@ -42,13 +42,13 @@ class RateEquations(object):
 
         y = y_.reshape(self.y_shape)
 
-        for k in xrange(self.nuclear_charge + 1):
+        for k in xrange(self.nuclear_charge + 1): #FIXME: number of charge states
             if k == 0:
-                gain = y[k-1]*S[k-1] + y[k+1]*alpha[k]
+                gain = y[k+1]*alpha[k]
                 loss = y[k] * S[k]
             elif k == self.nuclear_charge:
                 gain = y[k-1]*S[k-1]
-                loss = y[k] * (S[k] + alpha[k-1])
+                loss = y[k] * alpha[k-1]
             else:
                 # eq 2 with alpha[k+1] => alpha[k] substitiution
                 gain = y[k-1]*S[k-1] + y[k+1]*alpha[k]
