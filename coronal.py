@@ -26,11 +26,11 @@ class FractionalAbundance(object):
         self.temperature = temperature
         self.density = density
 
-    def plot_vs_temperature(self):
+    def plot_vs_temperature(self, **kwargs):
         from matplotlib.pyplot import gca
         ax = gca()
 
-        ax.loglog(self.temperature, self.y.T)
+        ax.loglog(self.temperature, self.y.T, **kwargs)
         ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
         ax.set_ylim(0.05, 1.3)
         self._annotate_ionisation_stages(ax)
