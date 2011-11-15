@@ -40,6 +40,15 @@ python module _xxdata_11 ! in
             logical, intent(out) :: lstan
             logical, intent(out) :: lptn
         end subroutine xxdata_11
+
+        subroutine helper_open_file(iunit, filename)
+            character*120, intent(in) :: filename
+            integer, intent(out) :: iunit
+        end subroutine helper_open_file
+
+        subroutine helper_close_file(iunit)
+            integer, intent(in) :: iunit
+        end subroutine helper_open_file
     end interface 
 end python module xxdata_11
 

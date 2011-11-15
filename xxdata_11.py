@@ -1,4 +1,3 @@
-import os
 import _xxdata_11
 
 adf11_classes = {
@@ -26,18 +25,13 @@ def read_acd(filename):
 
 
 def read_adf11(name, class_):
-    fd = open(name, 'r')
-
-    fortran_filename = 'fort.%d' % fd.fileno()
-    os.symlink(name, fortran_filename)
-
-    try:
-        iclass = adf11_classes[class_]
-    except IndexError:
+    if class_ not in adf11_classes:
         raise NotImplementedError('unknown adf11 class: %s' % class_)
 
-    ret =  _xxdata_11.xxdata_11(fd.fileno(), iclass, **parameters)
-    os.unlink(fortran_filename)
+    iclass = adf11_classes[class_]
+    iunit = _xxdata_11.helper_open_file(name)
+    ret =  _xxdata_11.xxdata_11(iunit, iclass, **parameters)
+    _xxdata_11.helper_close_file(iunit)
     return convert_to_dictionary(ret)
 
 
