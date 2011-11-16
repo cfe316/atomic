@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.integrate import odeint
 
+from abundance import FractionalAbundance
 
 class RateEquations(object):
     def __init__(self, atomic_data):
@@ -76,7 +77,13 @@ class RateEquations(object):
         self._set_temperature_and_density_grid(temperature, density)
         self._set_initial_conditions()
         solution  = odeint(self.derivs, self.y, time)
-        return solution.reshape(time.shape + self.y_shape)
+
+        abundances = []
+        for s in solution.reshape(time.shape + self.y_shape):
+            abundances.append(FractionalAbundance(s, self.temperature,
+                self.density))
+
+        return abundances
 
 
 if __name__ == '__main__':
