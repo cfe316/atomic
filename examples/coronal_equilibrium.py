@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 
 from atomic import AtomicData, CoronalEquilibrium
 
-elements = ['C', 'Ar']
+elements = ['C', 'Ne', 'Ar']
 
 temperature_ranges = {
     'C'  : np.logspace(0,3, 300),
+    'Ne' : np.logspace(0,4, 300),
     'Ar' : np.logspace(0,5, 300),
 }
 

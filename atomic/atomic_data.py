@@ -18,6 +18,11 @@ carbon_data = {
     'recombination_coeff' : 'acd96_c.dat',
 }
 
+neon_data = {
+    'element' : 'Ne',
+    'ionisation_coeff' : 'scd96_ne.dat',
+    'recombination_coeff' : 'acd96_ne.dat',
+}
 
 def _element_data(element):
     e = element.lower()
@@ -25,6 +30,10 @@ def _element_data(element):
         return argon_data
     elif e in ['c', 'carbon']:
         return carbon_data
+    elif e in ['ne', 'neon']:
+        return neon_data
+    else:
+        raise NotImplementedError('unknown element: %s' % element)
 
 
 def _full_path(file_):
