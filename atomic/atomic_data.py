@@ -16,6 +16,9 @@ carbon_data = {
     'element' : 'C',
     'ionisation_coeff' : 'scd96_c.dat',
     'recombination_coeff' : 'acd96_c.dat',
+    'contiuum_radiation' : 'prb96_c.dat',
+    'line_radiation' : 'plt96_c.dat',
+    'cx_radiation' : 'prc96_c.dat',
 }
 
 neon_data = {
@@ -43,11 +46,14 @@ def _full_path(file_):
 
 
 class AtomicData(object):
-    def __init__(self, element, ionisation_coeff, recombination_coeff):
+    def __init__(self, element, ionisation_coeff, recombination_coeff,
+            radiation=None):
         self.element = element
         self.nuclear_charge = ionisation_coeff.nuclear_charge
         self.ionisation_coeff = ionisation_coeff
         self.recombination_coeff = recombination_coeff
+
+        self.radiation = radiation
 
         self._check_consistency()
 
@@ -64,7 +70,32 @@ class AtomicData(object):
         scd_file = d['ionisation_coeff']
         alpha = RateCoefficient(xxdata_11.read_acd(_full_path(acd_file)))
         S = RateCoefficient(xxdata_11.read_scd(_full_path(scd_file)))
-        return cls(d['element'], S, alpha)
+
+        # radiated power
+        radiation = {}
+        prb_file = d.get('contiuum_radiation', None)
+        plt_file = d.get('line_radiation', None)
+        prc_file = d.get('cx_radiation', None)
+
+        if prb_file is not None:
+            r = RateCoefficient(xxdata_11.read_prb(_full_path(prb_file)))
+        else:
+            r = None
+        radiation['continuum'] = r
+
+        if plt_file is not None:
+            r = RateCoefficient(xxdata_11.read_plt(_full_path(plt_file)))
+        else:
+            r = None
+        radiation['line'] = r
+
+        if prc_file is not None:
+            r = RateCoefficient(xxdata_11.read_prc(_full_path(prc_file)))
+        else:
+            r = None
+        radiation['cx'] = r
+
+        return cls(d['element'], S, alpha, radiation=radiation)
 
 
 class RateCoefficient(object):

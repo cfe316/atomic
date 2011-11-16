@@ -3,6 +3,9 @@ import _xxdata_11
 adf11_classes = {
     'acd' : 1, # recombination coefficients
     'scd' : 2, # ionisation coefficients
+    'prb' : 4, # line radiation power
+    'plt' : 8, # continuum radiation power
+    'prc' : 5, # charge-exchange recombination radiation
 }
 
 parameters = {
@@ -23,6 +26,14 @@ def read_scd(filename):
 def read_acd(filename):
     return read_adf11(filename, class_='acd')
 
+def read_prb(filename):
+    return read_adf11(filename, class_='prb')
+
+def read_plt(filename):
+    return read_adf11(filename, class_='plt')
+
+def read_prc(filename):
+    return read_adf11(filename, class_='prc')
 
 def read_adf11(name, class_):
     if class_ not in adf11_classes:
