@@ -20,13 +20,14 @@ class FractionalAbundance(object):
         return z_mean
 
     def plot_vs_temperature(self, **kwargs):
-        from matplotlib.pyplot import gca
-        ax = gca()
+        import matplotlib.pyplot as plt
+        ax = plt.gca()
 
         ax.loglog(self.temperature, self.y.T, **kwargs)
         ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
         ax.set_ylim(0.05, 1.3)
         self._annotate_ionisation_stages(ax)
+        plt.draw_if_interactive()
 
     def _annotate_ionisation_stages(self, ax):
         max_pos = self.y.argmax(axis=-1)
