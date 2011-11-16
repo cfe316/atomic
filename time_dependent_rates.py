@@ -9,13 +9,14 @@ class RateEquations(object):
         self.element = atomic_data.element
         self.nuclear_charge = atomic_data.nuclear_charge
 
-        self.temperature = np.logspace(0, 3, 300)
-        self.density = 1e19
+    def _set_temperature_and_density_grid(self, temperature, density):
+        self.temperature = temperature
+        self.density = density
 
+    def _set_initial_conditions(self):
         self.y_shape = (self.nuclear_charge + 1, len(self.temperature))
         self._init_y()
         self._init_coeffs()
-
 
     def _init_y(self):
         y = np.zeros(self.y_shape)
@@ -58,7 +59,22 @@ class RateEquations(object):
 
         return dydt.ravel()
 
-    def solve(self, time):
+    def solve(self, time, temperature, density):
+        """
+        Integrate the rate equations.
+
+        Parameters
+        ----------
+        time : array
+            A sequence of time points for which to solve.
+        temperature : array
+            Electron temperature grid to solve on [eV].
+        density : array
+            Electron density grid to solve on [m-3].
+        """
+
+        self._set_temperature_and_density_grid(temperature, density)
+        self._set_initial_conditions()
         solution  = odeint(self.derivs, self.y, time)
         return solution.reshape(time.shape + self.y_shape)
 
