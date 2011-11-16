@@ -20,6 +20,6 @@ for element in elements:
 
     plt.figure();
     y.plot_vs_temperature()
-    #plt.savefig('coronal_equilibrium_%s.pdf' % element')
+    #plt.savefig('coronal_equilibrium_%s.pdf' % element)
 
 plt.show()

@@ -39,7 +39,7 @@ def _element_data(element):
 def _full_path(file_):
     """ Figure out the location of the atomic datafiles. """
     module_path = os.path.dirname(os.path.realpath( __file__ ))
-    return os.path.join(module_path, '..', 'atomic_data', file_)
+    return os.path.join(module_path, '..', 'adas_data', file_)
 
 
 class AtomicData(object):
