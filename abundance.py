@@ -1,8 +1,23 @@
+import numpy as np
+
+
 class FractionalAbundance(object):
     def __init__(self, y, temperature, density):
         self.y = y
         self.temperature = temperature
         self.density = density
+
+    def mean_charge(self):
+        """
+        Compute the mean charge:
+            <Z> = sum_k ( y_k * k )
+        """
+
+        k = np.arange(self.y.shape[0])
+        k = k[:,np.newaxis]
+
+        z_mean = np.sum(self.y * k, axis=0)
+        return z_mean
 
     def plot_vs_temperature(self, **kwargs):
         from matplotlib.pyplot import gca
