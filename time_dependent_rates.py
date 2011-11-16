@@ -54,10 +54,9 @@ class RateEquations(object):
                 gain = y[k-1]*S[k-1] + y[k+1]*alpha[k]
                 loss = y[k] * (S[k] + alpha[k-1])
 
-            dydt[k] = (gain - loss)
+            dydt[k] = ne * (gain - loss)
 
         return dydt.ravel()
-
 
     def solve(self, time):
         solution  = odeint(self.derivs, self.y, time)
