@@ -1,7 +1,10 @@
+import os
+
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
 import xxdata_11
+
 
 argon_data = {
     'element' : 'Ar',
@@ -24,6 +27,12 @@ def _element_data(element):
         return carbon_data
 
 
+def _full_path(file_):
+    """ Figure out the location of the atomic datafiles. """
+    module_path = os.path.dirname(os.path.realpath( __file__ ))
+    return os.path.join(module_path, '..', 'atomic_data', file_)
+
+
 class AtomicData(object):
     def __init__(self, element, ionisation_coeff, recombination_coeff):
         self.element = element
@@ -44,8 +53,8 @@ class AtomicData(object):
 
         acd_file = d['recombination_coeff']
         scd_file = d['ionisation_coeff']
-        alpha = RateCoefficient(xxdata_11.read_acd(acd_file))
-        S = RateCoefficient(xxdata_11.read_scd(scd_file))
+        alpha = RateCoefficient(xxdata_11.read_acd(_full_path(acd_file)))
+        S = RateCoefficient(xxdata_11.read_scd(_full_path(scd_file)))
         return cls(d['element'], S, alpha)
 
 

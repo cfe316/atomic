@@ -23,17 +23,5 @@ class CoronalEquilibrium(object):
 
 
 if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-    from atomic_data import AtomicData
+    pass
 
-    ad = AtomicData.from_element('Ar')
-    coronal = CoronalEquilibrium(ad)
-
-    temperature = np.logspace(0, 5, 300)
-    y = coronal.ionisation_stage_distribution(temperature, density=1e19)
-
-    plt.figure(1); plt.clf()
-    y.plot_vs_temperature()
-
-    plt.draw()
-    plt.show()

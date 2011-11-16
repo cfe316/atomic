@@ -87,21 +87,5 @@ class RateEquations(object):
 
 
 if __name__ == '__main__':
-    from atomic_data import AtomicData
-    ad = AtomicData.from_element('carbon')
-    rt = RateEquations(ad)
+    pass
 
-    tau_ss = 1e20 / rt.density
-    tau_ss *= 1e4
-    t = np.linspace(0, 3, 50) * tau_ss
-    yy = rt.solve(t)
-
-    from coronal import FractionalAbundance
-    import matplotlib.pyplot as plt
-
-    f = FractionalAbundance(yy[-1], rt.temperature, rt.density)
-
-    plt.figure(2); plt.clf()
-    f.plot_vs_temperature()
-    plt.draw()
-    plt.show()

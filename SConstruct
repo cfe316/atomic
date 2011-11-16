@@ -1,2 +1,2 @@
 # vim syntax=python
-SConscript('xxdata_11/SConscript')
+SConscript('src/xxdata_11/SConscript')
