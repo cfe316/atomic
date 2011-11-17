@@ -2,7 +2,8 @@ import numpy as np
 
 
 class FractionalAbundance(object):
-    def __init__(self, y, temperature, density):
+    def __init__(self, atomic_data, y, temperature, density):
+        self.atomic_data = atomic_data
         self.y = y
         self.temperature = temperature
         self.density = density

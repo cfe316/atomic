@@ -5,9 +5,7 @@ from abundance import FractionalAbundance
 
 class RateEquations(object):
     def __init__(self, atomic_data):
-        self.S = atomic_data.ionisation_coeff
-        self.alpha = atomic_data.recombination_coeff
-        self.element = atomic_data.element
+        self.atomic_data = atomic_data
         self.nuclear_charge = atomic_data.nuclear_charge
 
     def _set_temperature_and_density_grid(self, temperature, density):
@@ -25,21 +23,24 @@ class RateEquations(object):
         self.y = y.ravel()
 
     def _init_coeffs(self):
-        S_ = np.zeros(self.y_shape)
-        alpha_ = np.zeros(self.y_shape)
-        for k in xrange(self.nuclear_charge):
-            S_[k] = self.S(k, self.temperature, self.density)
-            alpha_[k] = self.alpha(k, self.temperature, self.density)
+        S = np.zeros(self.y_shape)
+        alpha = np.zeros(self.y_shape)
 
-        self.S_ = S_
-        self.alpha_ = alpha_
+        recombination_coeff = self.atomic_data.recombination_coeff
+        ionisation_coeff = self.atomic_data.ionisation_coeff
+        for k in xrange(self.nuclear_charge):
+            S[k] = ionisation_coeff(k, self.temperature, self.density)
+            alpha[k] = recombination_coeff(k, self.temperature, self.density)
+
+        self.S = S
+        self.alpha = alpha
 
     def derivs(self, y_, t0):
         """right hand side of the rate equations"""
 
         dydt = np.zeros(self.y_shape)
-        S = self.S_
-        alpha = self.alpha_
+        S = self.S
+        alpha = self.alpha
         ne = self.density
 
         y = y_.reshape(self.y_shape)
@@ -80,7 +81,7 @@ class RateEquations(object):
 
         abundances = []
         for s in solution.reshape(time.shape + self.y_shape):
-            abundances.append(FractionalAbundance(s, self.temperature,
+            abundances.append(FractionalAbundance(self.atomic_data, s, self.temperature,
                 self.density))
 
         return abundances

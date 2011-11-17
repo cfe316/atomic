@@ -9,7 +9,7 @@ temperature = np.logspace(0, 3, 50)
 electron_density = 1e19
 y = eq.ionisation_stage_distribution(temperature, electron_density)
 
-rad = atomic.Radiation(y, ad, neutral_fraction=1e-2)
+rad = atomic.Radiation(y, neutral_fraction=1e-2)
 
 import matplotlib.pyplot as plt
 plt.figure(10); plt.clf()

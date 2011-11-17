@@ -2,10 +2,10 @@ import numpy as np
 
 
 class Radiation(object):
-    def __init__(self, ionisation_stage_distribution, atomic_data,
-            impurity_fraction=1., neutral_fraction=0.):
+    def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
+            neutral_fraction=0.):
         self.y = ionisation_stage_distribution
-        self.atomic_data = atomic_data
+        self.atomic_data = ionisation_stage_distribution.atomic_data
 
         self.temperature = self.y.temperature
         self.electron_density = self.y.density
