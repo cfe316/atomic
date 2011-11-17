@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from atomic import AtomicData, CoronalEquilibrium
+import atomic
 
 elements = ['C', 'Ne', 'Ar']
 
@@ -12,8 +12,8 @@ temperature_ranges = {
 }
 
 for element in elements:
-    ad = AtomicData.from_element(element)
-    coronal = CoronalEquilibrium(ad)
+    ad = atomic.element(element)
+    coronal = atomic.CoronalEquilibrium(ad)
 
     temperature = temperature_ranges.get(element, np.logspace(0, 3, 300))
     y = coronal.ionisation_stage_distribution(temperature, density=1e19)

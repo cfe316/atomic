@@ -2,7 +2,7 @@ import numpy as np
 import atomic
 
 
-ad = atomic.AtomicData.from_element('carbon')
+ad = atomic.element('carbon')
 eq = atomic.CoronalEquilibrium(ad)
 
 temperature = np.logspace(0, 3, 50)

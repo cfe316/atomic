@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from atomic import AtomicData, RateEquations, CoronalEquilibrium
+import atomic
     
-ad = AtomicData.from_element('argon')
+ad = atomic.element('carbon')
 
 temperature = np.logspace(0, 3, 50)
 density = 1e19
@@ -13,10 +13,10 @@ t_normalized = np.logspace(-4, 0, 50)
 t_normalized -= t_normalized[0]
 times = t_normalized * tau_ss
 
-rt = RateEquations(ad)
+rt = atomic.RateEquations(ad)
 yy = rt.solve(times, temperature, density)
 
-eq = CoronalEquilibrium(ad)
+eq = atomic.CoronalEquilibrium(ad)
 f_coronal = eq.ionisation_stage_distribution(temperature, density)
 
 
