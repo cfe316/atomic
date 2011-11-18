@@ -1,23 +1,48 @@
-Atomic data
-===========
+Atomic
+======
 
-http://open.adas.ac.uk
+Atomic is a set of tools to calculate fractional abundance and radiation of
+different elements in hot plasmas.
 
-SCD: Effective Ionisation Coefficients
 
-ADF11 File: scd96_c.dat
-Software libraries: xxdata_11.tar.gz
+Installation and running the code
+---------------------------------
+
+    $ scons # to compile the extension module
+    $ ./fetch_adas_data # fetch the atomic data
+
+See below for details.
+
+Launch ipython and try out the examples
+    $ ipython
+
+    (in ipython) >>> %run examples/
 
 
 Compiling python extension module
 ---------------------------------
 
-in the ./xxdata_11 subdirectory, create the signature file:
+The extension module is compiled with SCons [1]:
 
-    $ f2py -m xxdata_11 -h xxdata_11.pyf xxdata_11.for xxrptn.for i4unit.for\
-        i4fctn.for xxword.for xxcase.for xfelem.for xxslen.for\
-        only: xxdata_11
+    $ scons
 
-Compile the extension module:
 
-    $ f2py -c -m xxdata_11 xxdata_11.pyf
+Fetching the atomic data
+------------------------
+
+Atomic needs atomic data ionisation/recombination etc. coefficients.  These are
+fetched from the OpenADAS [2] database.  In order to download your own dataset
+run:
+
+    $ ./fetch_adas_data
+
+For description of these so called iso-nuclear master files see [3].
+
+
+References
+----------
+
+[1] http://www.scons.org
+[2] http://http://open.adas.ac.uk
+[3] http://www.adas.ac.uk/man/chap4-04.pdf
+
