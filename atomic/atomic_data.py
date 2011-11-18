@@ -10,6 +10,9 @@ argon_data = {
     'element' : 'Ar',
     'ionisation_coeff' : 'scd89_ar.dat',
     'recombination_coeff' : 'acd89_ar.dat',
+    'contiuum_radiation' : 'prb89_ar.dat',
+    'line_radiation' : 'plt89_ar.dat',
+    'cx_radiation' : 'prc89_ar.dat',
 }
 
 carbon_data = {
