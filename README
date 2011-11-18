@@ -13,10 +13,11 @@ Installation and running the code
 
 See below for details.
 
-Launch ipython and try out the examples
+Launch ipython and try out the examples:
+
     $ ipython
 
-    (in ipython) >>> %run examples/
+    (in ipython) >>> %run examples/radiation.py
 
 
 Compiling python extension module
@@ -43,6 +44,6 @@ References
 ----------
 
 [1] http://www.scons.org
-[2] http://http://open.adas.ac.uk
+[2] http://open.adas.ac.uk
 [3] http://www.adas.ac.uk/man/chap4-04.pdf
 
