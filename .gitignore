@@ -8,6 +8,8 @@ src/xxdata_11/xxdata_11module.c
 atomic/_xxdata_11.so
 _xxdata_11.so
 
+adas_data/*.dat
+
 *.swp
 *.pyc
 .sconsign.dblite
