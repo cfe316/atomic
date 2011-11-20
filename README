@@ -8,7 +8,7 @@ different elements in hot plasmas.
 Installation and running the code
 ---------------------------------
 
-    $ scons # to compile the extension module
+    $ python setup.py build_ext --inplace # to compile the extension module
     $ ./fetch_adas_data # fetch the atomic data
 
 See below for details.
@@ -23,27 +23,26 @@ Launch ipython and try out the examples:
 Compiling python extension module
 ---------------------------------
 
-The extension module is compiled with SCons [1]:
+The extension module is compiled using numpy.distutils:
 
-    $ scons
+    $ python setup.py build_ext --inplace
 
 
 Fetching the atomic data
 ------------------------
 
 Atomic needs atomic data ionisation/recombination etc. coefficients.  These are
-fetched from the OpenADAS [2] database.  In order to download your own dataset
+fetched from the OpenADAS [1] database.  In order to download your own dataset
 run:
 
     $ ./fetch_adas_data
 
-For description of these so called iso-nuclear master files see [3].
+For description of these so called iso-nuclear master files see [2].
 
 
 References
 ----------
 
-[1] http://www.scons.org
-[2] http://open.adas.ac.uk
-[3] http://www.adas.ac.uk/man/chap4-04.pdf
+[1] http://open.adas.ac.uk
+[2] http://www.adas.ac.uk/man/chap4-04.pdf
 
