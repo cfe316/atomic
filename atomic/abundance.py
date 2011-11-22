@@ -31,12 +31,11 @@ class FractionalAbundance(object):
         plt.draw_if_interactive()
 
     def annotate_ionisation_stages(self, lines):
-        max_pos = self.y.argmax(axis=-1)
         for i, l in enumerate(lines):
             x = l.get_xdata()
             y = l.get_ydata()
-            index = y.argmax()
-            xy = x[index], y[index]
+            maxpos = y.argmax()
+            xy = x[maxpos], y[maxpos]
             s = '$%d^+$' % (i,)
             l.axes.annotate(s, xy, ha='center', color=l.get_color())
 
