@@ -3,31 +3,28 @@ import os
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-import xxdata_11
+from xxdata_11 import Adf11
 
 
 argon_data = {
-    'element' : 'Ar',
-    'ionisation_coeff' : 'scd89_ar.dat',
-    'recombination_coeff' : 'acd89_ar.dat',
-    'contiuum_radiation' : 'prb89_ar.dat',
-    'line_radiation' : 'plt89_ar.dat',
-    'cx_radiation' : 'prc89_ar.dat',
+    'ionisation' : 'scd89_ar.dat',
+    'recombination' : 'acd89_ar.dat',
+    'continuum_power' : 'prb89_ar.dat',
+    'line_power' : 'plt89_ar.dat',
+    'cx_power' : 'prc89_ar.dat',
 }
 
 carbon_data = {
-    'element' : 'C',
-    'ionisation_coeff' : 'scd96_c.dat',
-    'recombination_coeff' : 'acd96_c.dat',
-    'contiuum_radiation' : 'prb96_c.dat',
-    'line_radiation' : 'plt96_c.dat',
-    'cx_radiation' : 'prc96_c.dat',
+    'ionisation' : 'scd96_c.dat',
+    'recombination' : 'acd96_c.dat',
+    'continuum_power' : 'prb96_c.dat',
+    'line_power' : 'plt96_c.dat',
+    'cx_power' : 'prc96_c.dat',
 }
 
 neon_data = {
-    'element' : 'Ne',
-    'ionisation_coeff' : 'scd96_ne.dat',
-    'recombination_coeff' : 'acd96_ne.dat',
+    'ionisation' : 'scd96_ne.dat',
+    'recombination' : 'acd96_ne.dat',
 }
 
 def _element_data(element):
@@ -49,61 +46,50 @@ def _full_path(file_):
 
 
 class AtomicData(object):
-    def __init__(self, element, ionisation_coeff, recombination_coeff,
-            radiation=None):
-        self.element = element
-        self.nuclear_charge = ionisation_coeff.nuclear_charge
-        self.ionisation_coeff = ionisation_coeff
-        self.recombination_coeff = recombination_coeff
-
-        self.radiation = radiation
-
+    def __init__(self, coefficients):
+        """
+        Parameters
+        ----------
+        element : string
+            Name of the element.
+        coefficients : dict
+            Map of the different rate coefficients.
+        """
+        self.coeffs = coefficients
         self._check_consistency()
 
     def _check_consistency(self):
-        if self.ionisation_coeff.nuclear_charge !=\
-            self.recombination_coeff.nuclear_charge:
-                raise ValueError('inconsistent coefficients.')
+        nuclear_charge = set()
+        element = set()
+        for coeff in self.coeffs.values():
+            nuclear_charge.add(coeff.nuclear_charge)
+            element.add(coeff.element)
+
+        assert len(nuclear_charge) == 1, 'inconsistent nuclear charge.'
+        assert len(element) == 1, 'inconsistent element name.'
+
+        self.nuclear_charge = nuclear_charge.pop()
+        self.element = element.pop()
 
     @classmethod
     def from_element(cls, element):
-        d = _element_data(element)
+        element_data = _element_data(element)
 
-        acd_file = d['recombination_coeff']
-        scd_file = d['ionisation_coeff']
-        alpha = RateCoefficient(xxdata_11.read_acd(_full_path(acd_file)))
-        S = RateCoefficient(xxdata_11.read_scd(_full_path(scd_file)))
+        coefficients = {}
+        for key in element_data.keys():
+            name = _full_path(element_data[key])
+            adf11_data = Adf11(name).read()
+            coefficients[key] = RateCoefficient(adf11_data)
 
-        # radiated power
-        radiation = {}
-        prb_file = d.get('contiuum_radiation', None)
-        plt_file = d.get('line_radiation', None)
-        prc_file = d.get('cx_radiation', None)
-
-        if prb_file is not None:
-            r = RateCoefficient(xxdata_11.read_prb(_full_path(prb_file)))
-        else:
-            r = None
-        radiation['continuum'] = r
-
-        if plt_file is not None:
-            r = RateCoefficient(xxdata_11.read_plt(_full_path(plt_file)))
-        else:
-            r = None
-        radiation['line'] = r
-
-        if prc_file is not None:
-            r = RateCoefficient(xxdata_11.read_prc(_full_path(prc_file)))
-        else:
-            r = None
-        radiation['cx'] = r
-
-        return cls(d['element'], S, alpha, radiation=radiation)
+        return cls(coefficients)
 
 
 class RateCoefficient(object):
     def __init__(self, adf11_data):
         self.nuclear_charge = adf11_data['charge']
+        self.element = adf11_data['element']
+        self.adf11_file = adf11_data['name']
+
         self.log_temperature = adf11_data['temperature']
         self.log_density = adf11_data['density']
         self.log_coeff = adf11_data['coeff_table']

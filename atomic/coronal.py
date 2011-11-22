@@ -6,8 +6,8 @@ from abundance import FractionalAbundance
 class CoronalEquilibrium(object):
     def __init__(self, atomic_data):
         self.atomic_data = atomic_data
-        self.ionisation_coeff = atomic_data.ionisation_coeff
-        self.recombination_coeff = atomic_data.recombination_coeff
+        self.ionisation_coeff = atomic_data.coeffs['ionisation']
+        self.recombination_coeff = atomic_data.coeffs['recombination']
         self.nuclear_charge = atomic_data.nuclear_charge
 
     def ionisation_stage_distribution(self, temperature, density):

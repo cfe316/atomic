@@ -23,8 +23,8 @@ class Radiation(object):
 
     def _get_power_coeffs(self):
         power_coeffs = {}
-        for key in ['line', 'continuum', 'cx']:
-            power_coeffs[key] = self.atomic_data.radiation[key]
+        for key in ['line_power', 'continuum_power', 'cx_power']:
+            power_coeffs[key] = self.atomic_data.coeffs[key]
         return power_coeffs
 
     def _compute_power(self):
@@ -48,9 +48,9 @@ class Radiation(object):
                 coeff = power_coeffs[key](k, self.temperature,
                         self.electron_density)
 
-                if key in ['continuum', 'line']:
+                if key in ['continuum_power', 'line_power']:
                     scale = ne * ni * y.y[k]
-                elif key in ['cx']:
+                elif key in ['cx_power']:
                     scale = n0 * ni * y.y[k]
 
                 radiation_power[key][k] = scale * coeff
@@ -70,7 +70,7 @@ class Radiation(object):
         ax = kwargs.get('ax', plt.gca())
 
         lines = []
-        for key in ['line', 'continuum', 'cx', 'total']:
+        for key in ['line_power', 'continuum_power', 'cx_power', 'total']:
             p = self.power[key]
             l, = ax.loglog(self.temperature, p, label=self._get_label(key))
             lines.append(l)
@@ -96,9 +96,9 @@ class Radiation(object):
 
     def _get_label(self, key):
         labels = {
-            'continuum' : 'continuum',
-            'line' : 'line',
-            'cx' : 'charge-exchange',
+            'continuum_power' : 'continuum',
+            'line_power' : 'line',
+            'cx_power' : 'charge-exchange',
             'total' : 'total',
         }
         return labels.get(key, None)

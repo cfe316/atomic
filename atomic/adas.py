@@ -65,33 +65,6 @@ class OpenADAS(object):
         os.remove(tmpfile)
 
 
-class Sniffer(object):
-    def __init__(self, file_):
-        self.file_ = file_
-        self.name = os.path.basename(file_)
-
-        self._sniff_name()
-        self._check()
-
-    def _sniff_name(self):
-        name, extension = self.name.split(os.path.extsep)
-
-        type_, element = name.split('_')
-        class_ = type_[:3]
-        year = type_[3:]
-        resolved = year.endswith('r')
-
-        self.element = element
-        self.year = year
-        self.class_ = class_
-        self.extension = extension
-        self.resolved = resolved
-
-    def _check(self):
-        assert self.extension == 'dat'
-        assert self.resolved == False, 'metastable resolved data not supported.'
-
-
 from HTMLParser import HTMLParser
 class SearchPageParser(HTMLParser):
     def reset(self):

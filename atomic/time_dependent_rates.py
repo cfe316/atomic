@@ -26,8 +26,8 @@ class RateEquations(object):
         S = np.zeros(self.y_shape)
         alpha = np.zeros(self.y_shape)
 
-        recombination_coeff = self.atomic_data.recombination_coeff
-        ionisation_coeff = self.atomic_data.ionisation_coeff
+        recombination_coeff = self.atomic_data.coeffs['recombination']
+        ionisation_coeff = self.atomic_data.coeffs['ionisation']
         for k in xrange(self.nuclear_charge):
             S[k] = ionisation_coeff(k, self.temperature, self.density)
             alpha[k] = recombination_coeff(k, self.temperature, self.density)
