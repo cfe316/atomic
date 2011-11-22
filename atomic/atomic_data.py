@@ -121,9 +121,10 @@ class RateCoefficient(object):
         c : array_like
             Rate coefficent in [m3/s].
         """
+        Te, ne = np.broadcast_arrays(Te, ne)
         log_temperature = np.log10(Te)
         log_density = np.log10(ne * 1e-6)
 
         c = self.splines[k](log_temperature, log_density)
-        c = 1e-6 * np.power(10, c).squeeze()
+        c = 1e-6 * np.power(10, c).diagonal()
         return c
