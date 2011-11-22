@@ -27,10 +27,10 @@ class FractionalAbundance(object):
         lines = ax.loglog(self.temperature, self.y.T, **kwargs)
         ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
         ax.set_ylim(0.05, 1.3)
-        self._annotate_ionisation_stages(lines)
+        self.annotate_ionisation_stages(lines)
         plt.draw_if_interactive()
 
-    def _annotate_ionisation_stages(self, lines):
+    def annotate_ionisation_stages(self, lines):
         max_pos = self.y.argmax(axis=-1)
         for i, l in enumerate(lines):
             x = l.get_xdata()
