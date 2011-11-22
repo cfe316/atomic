@@ -24,18 +24,20 @@ class FractionalAbundance(object):
         import matplotlib.pyplot as plt
         ax = plt.gca()
 
-        ax.loglog(self.temperature, self.y.T, **kwargs)
+        lines = ax.loglog(self.temperature, self.y.T, **kwargs)
         ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
         ax.set_ylim(0.05, 1.3)
-        self._annotate_ionisation_stages(ax)
+        self._annotate_ionisation_stages(lines)
         plt.draw_if_interactive()
 
-    def _annotate_ionisation_stages(self, ax):
+    def _annotate_ionisation_stages(self, lines):
         max_pos = self.y.argmax(axis=-1)
-        for i in xrange(self.y.shape[0]):
-            index = max_pos[i]
-            xy = self.temperature[index], self.y[i, index]
+        for i, l in enumerate(lines):
+            x = l.get_xdata()
+            y = l.get_ydata()
+            index = y.argmax()
+            xy = x[index], y[index]
             s = '$%d^+$' % (i,)
-            ax.annotate(s, xy, ha='center')
+            l.axes.annotate(s, xy, ha='center', color=l.get_color())
 
 
