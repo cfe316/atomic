@@ -34,9 +34,26 @@ class FractionalAbundance(object):
         for i, l in enumerate(lines):
             x = l.get_xdata()
             y = l.get_ydata()
+            ax = l.axes
+
             maxpos = y.argmax()
             xy = x[maxpos], y[maxpos]
+            xy = self._reposition_annotation(ax, xy)
             s = '$%d^+$' % (i,)
-            l.axes.annotate(s, xy, ha='center', color=l.get_color())
+            ax.annotate(s, xy, ha='left', va='bottom', color=l.get_color())
+
+    def _reposition_annotation(self, ax, xy):
+            xy_fig = ax.transData.transform_point(xy)
+            xl, yl = ax.transAxes.inverted().transform(xy_fig)
+
+            min_x, max_x = 0.01, 0.95
+            if xl < min_x:
+                xy = ax.transAxes.transform_point((min_x, yl))
+                xy = ax.transData.inverted().transform_point(xy)
+            if xl > max_x:
+                xy = ax.transAxes.transform_point((max_x, yl))
+                xy = ax.transData.inverted().transform_point(xy)
+
+            return xy
 
 
