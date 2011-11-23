@@ -70,16 +70,23 @@ class Radiation(object):
 
     def plot(self, **kwargs):
         import matplotlib.pyplot as plt
+        if 'x' in kwargs:
+            xscale = 'linear'
+        else:
+            xscale = 'log'
+
         ax = kwargs.get('ax', plt.gca())
+        x = kwargs.get('x', self.temperature)
 
         lines = []
         for key in ['line_power', 'continuum_power', 'cx_power', 'total']:
             p = self.power[key]
-            l, = ax.loglog(self.temperature, p, label=self._get_label(key))
+            l, = ax.semilogy(x, p, label=self._get_label(key))
             lines.append(l)
 
-        plt.xlabel(r'$T_\mathrm{e}\ [\mathrm{eV}]$')
-        plt.ylabel(r'$P\ [\mathrm{W/m^3}]$')
+        ax.set_xscale(xscale)
+        ax.set_xlabel(r'$T_\mathrm{e}\ [\mathrm{eV}]$')
+        ax.set_ylabel(r'$P\ [\mathrm{W/m^3}]$')
 
         self._decorate_plot(ax, lines)
         plt.draw_if_interactive()
