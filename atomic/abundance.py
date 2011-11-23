@@ -30,6 +30,8 @@ class FractionalAbundance(object):
         self.annotate_ionisation_stages(lines)
         plt.draw_if_interactive()
 
+        return lines
+
     def annotate_ionisation_stages(self, lines):
         for i, l in enumerate(lines):
             x = l.get_xdata()
