@@ -1,5 +1,7 @@
 import numpy as np
 
+from atomic_data import ZeroCoefficient
+
 
 class Radiation(object):
     def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
@@ -24,7 +26,8 @@ class Radiation(object):
     def _get_power_coeffs(self):
         power_coeffs = {}
         for key in ['line_power', 'continuum_power', 'cx_power']:
-            power_coeffs[key] = self.atomic_data.coeffs[key]
+            power_coeffs[key] = self.atomic_data.coeffs.get(key,
+                    ZeroCoefficient())
         return power_coeffs
 
     def _compute_power(self):

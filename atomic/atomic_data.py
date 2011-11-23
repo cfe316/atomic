@@ -128,3 +128,13 @@ class RateCoefficient(object):
         c = self.splines[k](log_temperature, log_density)
         c = 1e-6 * np.power(10, c).diagonal()
         return c
+
+
+from sys import float_info
+class ZeroCoefficient(RateCoefficient):
+    def __init__(self, adf11_data=None):
+        pass
+
+    def __call__(self, k, Te, ne):
+        Te, ne = np.broadcast_arrays(Te, ne)
+        return float_info.min * np.ones_like(Te)
