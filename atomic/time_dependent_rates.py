@@ -84,7 +84,59 @@ class RateEquations(object):
             abundances.append(FractionalAbundance(self.atomic_data, s, self.temperature,
                 self.density))
 
-        return abundances
+        return RateEquationsSolution(time, abundances)
+
+
+class RateEquationsSolution(object):
+    def __init__(self, times, abundances):
+        self.times = times
+        self.abundances = abundances
+
+        self._find_parameters()
+        self._compute_y_in_coronal()
+
+    def _find_parameters(self):
+        y = self.abundances[0]
+        self.atomic_data = y.atomic_data
+        self.temperature = y.temperature
+        self.density = y.density
+
+    def _compute_y_in_coronal(self):
+        """
+        Compute the corresponding ionisation stage distribution in coronal
+        equilibrum.
+        """
+        from coronal import CoronalEquilibrium
+        eq = CoronalEquilibrium(self.atomic_data)
+        y_coronal = eq.ionisation_stage_distribution(self.temperature,
+                self.density)
+
+        self.y_coronal = y_coronal
+
+    def __getitem__(self, key):
+        if not isinstance(key, int):
+            raise TypeError('key must be integer.')
+        return self.abundances[key]
+
+    def at_temperature(self, temperature_value):
+        temperature_index = np.searchsorted(self.temperature,
+                temperature_value)
+
+        return np.array([y.y[:, temperature_index] for y in self.abundances])
+
+    def mean_charge(self):
+        return np.array([f.mean_charge() for f in self.abundances])
+
+    def steady_state_time(self, rtol=0.01):
+        z_mean_ref = self.y_coronal.mean_charge()
+
+        tau_ss = np.zeros_like(self.temperature)
+        for t, f in reversed(zip(self.times, self.abundances)):
+            z_mean = f.mean_charge()
+            mask = np.abs(z_mean/z_mean_ref - 1) <= rtol
+            tau_ss[mask] = t
+
+        return tau_ss
 
 
 if __name__ == '__main__':
