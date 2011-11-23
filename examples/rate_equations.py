@@ -27,7 +27,7 @@ tau_ss = yy.steady_state_time()
 
 plt.figure(2); plt.clf()
 y_final.plot_vs_temperature()
-yy.y_coronal.plot_vs_temperature(ls='--')
+lines_ref = yy.y_coronal.plot_vs_temperature(ls='--')
 plt.draw()
 
 
@@ -40,7 +40,8 @@ plt.draw()
 fig = plt.figure(4); fig.clf()
 ax = fig.add_subplot(111)
 
-ax.loglog(temperature, tau_ss * density)
+line, = ax.loglog(temperature, tau_ss * density, visible=False)
+y_final.replot_colored(line, lines_ref)
 ax.set_xlabel(r'$T_\mathrm{e}\ [\mathrm{eV}]$')
 ax.set_ylabel(r'$n_\mathrm{e} \tau_\mathrm{ss}\ [\mathrm{m^{-3} s}]$')
 plt.draw()
