@@ -58,4 +58,17 @@ class FractionalAbundance(object):
 
             return xy
 
+    def replot_colored(self, line, lines_ref):
+        """
+        Replot a line, colored according the most abundant state.
+        """
+        ax = line.axes
+        x = line.get_xdata()
+        y = line.get_ydata()
+
+        lines = []
+        imax = np.argmax(self.y, axis=0)
+        for i, line_ref in enumerate(lines_ref):
+            mask = imax == i
+            lines.append(ax.plot(x[mask], y[mask], color=line_ref.get_color()))
 
