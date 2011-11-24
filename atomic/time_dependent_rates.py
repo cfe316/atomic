@@ -62,6 +62,35 @@ class RateEquations(object):
 
         return dydt.ravel()
 
+    def derivs_optimized(self, y_, t0):
+        """
+        Optimised version of derivs using array slicing.  It should give the
+        same as derivs().
+        """
+
+        dydt = self.dydt
+        S = self.S
+        alpha_to = self.alpha
+        ne = self.density
+
+        y = y_.reshape(self.y_shape)
+        current = slice(1, -1)
+        upper = slice(2, None)
+        lower = slice(None, -2)
+        dydt[current]  = y[lower] * S[lower]
+        dydt[current] += y[upper] * alpha_to[current]
+        dydt[current] -= y[current] * S[current]
+        dydt[current] -= y[current] * alpha_to[lower]
+
+        current, upper = 0, 1 # neutral and single ionised state
+        dydt[current] = y[upper] * alpha_to[current] - y[current] * S[current]
+
+        current, lower = -1, -2 # fully stripped and 1 electron state
+        dydt[current] = y[lower] * S[lower] - y[current] * alpha_to[lower]
+        dydt *= ne
+
+        return dydt.ravel()
+
     def solve(self, time, temperature, density):
         """
         Integrate the rate equations.
@@ -78,7 +107,7 @@ class RateEquations(object):
 
         self._set_temperature_and_density_grid(temperature, density)
         self._set_initial_conditions()
-        solution  = odeint(self.derivs, self.y, time)
+        solution  = odeint(self.derivs_optimized, self.y, time)
 
         abundances = []
         for s in solution.reshape(time.shape + self.y_shape):
