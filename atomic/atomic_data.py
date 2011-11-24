@@ -25,6 +25,8 @@ carbon_data = {
 neon_data = {
     'ionisation' : 'scd96_ne.dat',
     'recombination' : 'acd96_ne.dat',
+    'continuum_power' : 'prb96_ne.dat',
+    'line_power' : 'plt96_ne.dat',
 }
 
 def _element_data(element):
