@@ -21,6 +21,7 @@ class RateEquations(object):
         y = np.zeros(self.y_shape)
         y[0] = np.ones_like(self.temperature)
         self.y = y.ravel()
+        self.dydt = np.zeros(self.y_shape)
 
     def _init_coeffs(self):
         S = np.zeros(self.y_shape)
@@ -38,7 +39,7 @@ class RateEquations(object):
     def derivs(self, y_, t0):
         """right hand side of the rate equations"""
 
-        dydt = np.zeros(self.y_shape)
+        dydt = self.dydt
         S = self.S
         alpha = self.alpha
         ne = self.density
