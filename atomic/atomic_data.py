@@ -113,6 +113,9 @@ class RateCoefficient(object):
 
         Parameters
         ----------
+        k : int
+            Ionisation stage. k=0 is the neutral atom, k=Z is  the fully
+            stripped ion, where Z is the atomic number.
         Te : array_like
             Temperature in [eV].
         ne : array_like
@@ -123,14 +126,37 @@ class RateCoefficient(object):
         c : array_like
             Rate coefficent in [m3/s].
         """
+        c = self.log10(k, Te, ne)
+        return np.power(10, c)
+
+    def log10(self, k, Te, ne):
+        """
+        Evaulate the logarithm of ionisation/recombination coefficients of
+        k'th atomic state at a given temperature and density.
+
+        Parameters
+        ----------
+        k : int
+            Ionisation stage. k=0 is the neutral atom, k=Z is  the fully
+            stripped ion, where Z is the atomic number.
+        Te : array_like
+            Temperature in [eV].
+        ne : array_like
+            Density in [m-3].
+
+        Returns
+        -------
+        c : array_like
+            log10(rate coefficent in [m3/s])
+        """
+
         Te, ne = np.broadcast_arrays(Te, ne)
         log_temperature = np.log10(Te)
         log_density = np.log10(ne * 1e-6)
 
         c = self.splines[k](log_temperature, log_density)
-        c = 1e-6 * np.power(10, c).diagonal()
-        return c
-
+        c -= 6 # log10(cm3/s) => log10(m3/s)
+        return c.diagonal()
 
 from sys import float_info
 class ZeroCoefficient(RateCoefficient):
