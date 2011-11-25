@@ -101,6 +101,35 @@ def time_dependent_z(element_name, times, temperature, density):
     g.set_title(Uppercase(y.atomic_data.element) + r' time dependent $\left<Z\right>$')
 
 
+def time_dependent_power(element_name, times, temperature, density):
+    rt = atomic.RateEquations(atomic.element(element_name))
+
+    y = rt.solve(times, temperature, density)
+
+    ne_tau = np.array([ 1e14, 1e15, 1e16, 1e17, 1e18])
+    indices = np.searchsorted(y.times, ne_tau/density)
+
+    g = TemporalEvolutionGraph()
+
+    for i in indices:
+        rad = atomic.Radiation(y[i])
+        total_power = rad.power['total'] / rad.electron_density /\
+                rad.get_impurity_density()
+        g.loglog(temperature, total_power, color='black', ls='--')
+
+    g.ax.set_xlabel(r'$T_\mathrm{e}\ \mathrm{(eV)}$')
+    g.ax.set_ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
+    g.annotate_lines(['$10^{%d}$' % i for i in np.log10(ne_tau)])
+
+    power_coronal = atomic.Radiation(y.y_coronal).power['total']
+    power_coronal /= rad.electron_density * rad.get_impurity_density()
+    g.loglog(temperature, power_coronal, color='black')
+
+    def Uppercase(text):
+        return text[0].upper() + text[1:]
+    g.set_title(Uppercase(y.atomic_data.element) + r' time dependent power')
+
+
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     times = np.logspace(-7, 0, 100)
@@ -108,6 +137,8 @@ if __name__ == '__main__':
     density = 1e19
 
     time_dependent_z('carbon', times, temperature, density)
+    plt.figure()
+    time_dependent_power('carbon', times, temperature, density)
 
     plt.draw()
     plt.show()
