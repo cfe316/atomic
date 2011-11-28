@@ -20,6 +20,26 @@ class FractionalAbundance(object):
         z_mean = np.sum(self.y * k, axis=0)
         return z_mean
 
+    def effective_charge(self, impurity_fraction, ion_density=None):
+        """
+        Compute the effective charge:
+
+                    n_i + n_I <Z**2>
+            Z_eff = ----------------
+                          n_e
+
+        using the approximation <Z**2> = <Z>**2.
+        """
+        if ion_density is None:
+            ion_density = self.density
+
+        impurity_density = impurity_fraction * self.density
+
+        z_mean = self.mean_charge()
+        zeff = (ion_density + impurity_density * z_mean**2) / self.density
+
+        return zeff
+
     def plot_vs_temperature(self, **kwargs):
         import matplotlib.pyplot as plt
         ax = plt.gca()
