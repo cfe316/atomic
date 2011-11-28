@@ -42,7 +42,7 @@ class FractionalAbundance(object):
 
     def plot_vs_temperature(self, **kwargs):
         import matplotlib.pyplot as plt
-        ax = plt.gca()
+        ax = kwargs.pop('ax', plt.gca())
 
         lines = ax.loglog(self.temperature, self.y.T, **kwargs)
         ax.set_xlabel('$T_\mathrm{e}\ [\mathrm{eV}]$')
