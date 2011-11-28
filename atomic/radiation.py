@@ -15,7 +15,16 @@ class Radiation(object):
         self.neutral_fraction = neutral_fraction
         self.impurity_fraction = impurity_fraction
 
-        self.power = self._compute_power()
+    @property
+    def power(self):
+        return self._compute_power()
+
+    @property
+    def specific_power(self):
+        power = self.power
+        for key in power.keys():
+            power[key] /= self.electron_density * self.get_impurity_density()
+        return power
 
     def get_impurity_density(self):
         return self.impurity_fraction * self.electron_density
@@ -80,7 +89,7 @@ class Radiation(object):
 
         lines = []
         for key in ['line_power', 'continuum_power', 'cx_power', 'total']:
-            p = self.power[key]
+            p = self.specific_power[key]
             l, = ax.semilogy(x, p, label=self._get_label(key))
             lines.append(l)
 
