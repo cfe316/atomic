@@ -59,6 +59,7 @@ class AtomicData(object):
         """
         self.coeffs = coefficients
         self._check_consistency()
+        self._make_element_initial_uppercase()
 
     def _check_consistency(self):
         nuclear_charge = set()
@@ -84,6 +85,10 @@ class AtomicData(object):
             coefficients[key] = RateCoefficient(adf11_data)
 
         return cls(coefficients)
+
+    def _make_element_initial_uppercase(self):
+        e = self.element
+        self.element = e[0].upper() + e[1:]
 
 
 class RateCoefficient(object):
