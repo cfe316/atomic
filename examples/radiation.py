@@ -16,10 +16,9 @@ plt.figure(10); plt.clf()
 
 customize = True
 
+lines = rad.plot()
+
 if customize:
-    for key in rad.power.keys():
-        rad.power[key] /= rad.electron_density * rad.get_impurity_density()
-    lines = rad.plot()
     plt.ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
     plt.ylim(ymin=1e-35)
 
@@ -33,13 +32,10 @@ if customize:
         exponent = np.log10(n0/ne)
         s += '$10^{%d}$' % exponent
 
-    xy = (rad.temperature[-1], rad.power['total'][-1])
+    xy = (rad.temperature[-1], rad.specific_power['total'][-1])
     plt.annotate(s, xy, xytext=(1.05, 0.1),
         horizontalalignment='center',
         textcoords='axes fraction')
-
-else:
-    lines = rad.plot()
 
 lines[-1].set_linewidth(2)
 plt.legend(loc='best')
