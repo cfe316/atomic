@@ -117,6 +117,21 @@ class RateEquations(object):
         return RateEquationsSolution(time, abundances)
 
 
+class RateEquationsWithDiffusion(RateEquations):
+    def derivs_optimized(self, y, t):
+        dydt = super(self.__class__, self).derivs_optimized(y, t)
+
+        ne = self.density
+        tau = self.diffusion_time
+
+        dydt -= y/tau
+        return dydt
+
+    def solve(self, time, temperature, density, diffusion_time):
+        self.diffusion_time = diffusion_time
+        return super(self.__class__, self).solve(time, temperature, density)
+
+
 class RateEquationsSolution(object):
     def __init__(self, times, abundances):
         self.times = times
