@@ -183,6 +183,35 @@ class RateEquationsSolution(object):
 
         return tau_ss
 
+    def ensemble_average(self):
+        from scipy.integrate import cumtrapz
+
+        tau = self.times[:, np.newaxis, np.newaxis]
+        y = [y.y for y in self.abundances]
+        y_bar = cumtrapz(y, tau, axis=0)
+        y_bar /= tau[1:]
+
+        return self._new_from(tau.squeeze(), y_bar)
+
+    def select_times(self, time_instances):
+        indices = np.searchsorted(self.times, time_instances)
+        f = [self[i] for i in indices]
+        times = self.times[indices]
+
+        return self.__class__(times, f)
+
+    def __iter__(self):
+        for y in self.abundances:
+            yield y
+
+    def _new_from(self, times, concentrations):
+        new_concentrations = []
+        for y in concentrations:
+            f = FractionalAbundance(self.atomic_data, y, self.temperature,
+                    self.density)
+            new_concentrations.append(f)
+        return self.__class__(times, new_concentrations)
+
 
 if __name__ == '__main__':
     pass
