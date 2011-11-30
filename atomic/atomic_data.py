@@ -3,7 +3,7 @@ import os
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-from xxdata_11 import Adf11
+from adf11 import Adf11
 
 
 argon_data = {

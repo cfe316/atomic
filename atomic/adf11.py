@@ -1,3 +1,11 @@
+"""
+This module contains an interface to the Adas Data File type 11 (ADF 11), so
+called Iso-nuclear master files.  See [1] for an example file and [2] for
+detailed description of the possible subclasses.
+
+[1] http://www.adas.ac.uk/man/appxa-11.pdf
+[2] http://www.adas.ac.uk/man/chap4-04.pdf
+"""
 import os
 import _xxdata_11
 

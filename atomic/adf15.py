@@ -1,8 +1,16 @@
+"""
+This module contains an interface to the Adas Data File type 15 (ADF 15),
+that contain Photon Emissivity Coefficients (PEC). See [1] for an example
+file.
+
+[1] http://www.adas.ac.uk/man/appxa-15.pdf
+"""
 import os
 import _xxdata_15
 
-# Some hard coded parameters to run xxdata_15.for routine.  The values have
-# been take from src/xxdata_15/test.for, and should be OK for all files.
+# Some hard coded parameters to run src/xxdata_15/xxdata_15.for routine.  The
+# values have been take from src/xxdata_15/test.for, and should be OK for
+# all files.
 parameters = {
     'nstore' : 500,
     'nddim' : 50,
@@ -48,6 +56,9 @@ class Adf15(object):
         d['charge+1'] = is1
         d['element'] = esym.strip()
         d['partition_levels'] = nptnl
+        d['partial_file'] = bool(lres)
+        d['partial_block_present'] = bool(lptn)
+        d['comment_text_block_present'] = bool(lcmt)
 
         n_datablocks = nbsel
         n_densities = ita
@@ -56,10 +67,8 @@ class Adf15(object):
         temperatures = teda
         pec = pec
         wavelengths = wavel
+        transition_types = ctype.T.reshape(-1, 8)
 
-        d['partial_file'] = bool(lres)
-        d['partial_block_present'] = bool(lptn)
-        d['comment_text_block_present'] = bool(lcmt)
 
         datablocks = []
         for i in xrange(n_datablocks):
@@ -69,6 +78,7 @@ class Adf15(object):
             b['temperature'] = temperatures[:nt,i]
             b['pec'] = pec[:nt, :nd, i]
             b['wavelength'] = wavelengths[i]
+            b['transition'] = ''.join(transition_types[i]).strip()
 
             datablocks.append(b)
 
