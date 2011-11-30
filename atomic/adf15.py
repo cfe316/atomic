@@ -78,7 +78,7 @@ class Adf15(object):
             b['temperature'] = temperatures[:nt,i]
             b['pec'] = pec[:nt, :nd, i]
             b['wavelength'] = wavelengths[i]
-            b['transition'] = ''.join(transition_types[i]).strip()
+            b['type'] = ''.join(transition_types[i]).strip()
 
             datablocks.append(b)
 
