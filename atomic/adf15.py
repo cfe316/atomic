@@ -63,8 +63,8 @@ class Adf15(object):
         n_datablocks = nbsel
         n_densities = ita
         n_temperatures = ida
-        densities = teta
-        temperatures = teda
+        densities = teda
+        temperatures = teta
         pec = pec
         wavelengths = wavel
         transition_types = ctype.T.reshape(-1, 8)
