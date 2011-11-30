@@ -1,0 +1,70 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module _xxdata_15 ! in
+    interface  ! in :xxdata_15
+        subroutine xxdata_15(iunit,dsname,nstore,ntdim,nddim,ndptnl,ndptn,ndptnc,ndcnct,ndstack,ndcmt,iz0,is,is1,esym,nptnl,nptn,nptnc,iptnla,iptna,iptnca,ncnct,icnctv,ncptn_stack,cptn_stack,lres,lptn,lcmt,lsup,nbsel,isela,cwavel,cfile,ctype,cindm,wavel,ispbr,isppr,isstgr,iszr,ita,ida,teta,teda,pec,pec_max,ncmt_stack,cmt_stack) ! in xxdata_15/xxdata_15.for
+            integer, intent(in) :: iunit
+            character*80, intent(in) :: dsname
+            integer, intent(in) :: nstore
+            integer, intent(in) :: ntdim
+            integer, intent(in) :: nddim
+            integer, intent(in) :: ndptnl
+            integer, intent(in) :: ndptn
+            integer, intent(in) :: ndptnc
+            integer, intent(in) :: ndcnct
+            integer, intent(in) :: ndstack
+            integer, intent(in) :: ndcmt
+            integer, intent(out) :: iz0
+            integer, intent(out) :: is
+            integer, intent(out) :: is1
+            character*2, intent(out) :: esym
+            integer, intent(out) :: nptnl
+            integer, intent(out), dimension(ndptnl) :: nptn
+            integer, intent(out), dimension(ndptnl,ndptn),depend(ndptnl) :: nptnc
+            integer, intent(out), dimension(ndptnl),depend(ndptnl) :: iptnla
+            integer, intent(out), dimension(ndptnl,ndptn),depend(ndptnl,ndptn) :: iptna
+            integer, intent(out), dimension(ndptnl,ndptn,ndptnc),depend(ndptnl,ndptn) :: iptnca
+            integer, intent(out), :: ncnct
+            integer, intent(out), dimension(ndcnct) :: icnctv
+            integer, intent(out), :: ncptn_stack
+            character, intent(out), dimension(ndstack,80) :: cptn_stack
+            logical, intent(out), :: lres
+            logical, intent(out), :: lptn
+            logical, intent(out), :: lcmt
+            logical, intent(out), :: lsup
+            integer, intent(out), :: nbsel
+            integer, intent(out), dimension(nstore) :: isela
+            character, intent(out), dimension(nstore,10),depend(nstore) :: cwavel
+            character, intent(out), dimension(nstore,8),depend(nstore) :: cfile
+            character, intent(out), dimension(nstore,8),depend(nstore) :: ctype
+            character, intent(out), dimension(nstore,2),depend(nstore) :: cindm
+            real*8, intent(out), dimension(nstore),depend(nstore) :: wavel
+            integer, intent(out), dimension(nstore),depend(nstore) :: ispbr
+            integer, intent(out), dimension(nstore),depend(nstore) :: isppr
+            integer, intent(out), dimension(nstore),depend(nstore) :: isstgr
+            integer, intent(out), dimension(nstore),depend(nstore) :: iszr
+            integer, intent(out), dimension(nstore),depend(nstore) :: ita
+            integer, intent(out), dimension(nstore),depend(nstore) :: ida
+            real*8, intent(out), dimension(ntdim,nstore),depend(nstore) :: teta
+            real*8, intent(out), dimension(nddim,nstore),depend(nstore) :: teda
+            real*8, intent(out), dimension(ntdim,nddim,nstore),depend(ntdim,nddim,nstore) :: pec
+            real*8, intent(out), dimension(nstore),depend(nstore) :: pec_max
+            integer, intent(out), :: ncmt_stack
+            character, intent(out), dimension(ndcmt,80) :: cmt_stack
+        end subroutine xxdata_15
+
+        subroutine helper_open_file(iunit, filename)
+            character*120, intent(in) :: filename
+            integer, intent(out) :: iunit
+        end subroutine helper_open_file
+
+        subroutine helper_close_file(iunit)
+            integer, intent(in) :: iunit
+        end subroutine helper_open_file
+    end interface 
+end python module _xxdata_15
+
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
