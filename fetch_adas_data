@@ -1,2 +1,14 @@
-#!/bin/sh
-python atomic/adas.py
+#!/usr/bin/python
+import atomic.adas as adas
+
+atomic_data = './adas_data'
+elements_years = [('carbon', 96), ('argon', 89), ('neon', 96)]
+
+db = adas.OpenADAS()
+
+for element, year in elements_years:
+    res = db.search_adf11(element, year)
+
+    for r in res:
+        print r[1]
+        db.fetch(r, atomic_data)
