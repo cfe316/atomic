@@ -3,7 +3,7 @@ import urllib
 
 open_adas = 'http://open.adas.ac.uk/'
 
-class OpenADAS(object):
+class OpenAdas(object):
     def search_adf11(self, element, year='', metastable='unresolved'):
         p = [('element', element), ('year', year), ('metastable', metastable),
                 ('searching', 1)]
@@ -21,9 +21,9 @@ class OpenADAS(object):
             dst_directory = os.curdir
         self.dst_directory = dst_directory
 
-        dst_filename = os.path.join(self.dst_directory, filename)
+        dst_filename = os.path.join(self.dst_directory, id_filename[1])
 
-        url = self._construct_url()
+        url = self._construct_url(id_filename)
         tmpfile, msg = urllib.urlretrieve(url)
         lines = open(tmpfile).readlines()
 

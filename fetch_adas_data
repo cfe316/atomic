@@ -4,7 +4,7 @@ import atomic.adas as adas
 atomic_data = './adas_data'
 elements_years = [('carbon', 96), ('argon', 89), ('neon', 96)]
 
-db = adas.OpenADAS()
+db = adas.OpenAdas()
 
 for element, year in elements_years:
     res = db.search_adf11(element, year)
