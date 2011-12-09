@@ -61,8 +61,8 @@ class Adf15(object):
         d['comment_text_block_present'] = bool(lcmt)
 
         n_datablocks = nbsel
-        n_densities = ita
-        n_temperatures = ida
+        n_densities = ida
+        n_temperatures = ita
         densities = teda
         temperatures = teta
         pec = pec
