@@ -164,9 +164,13 @@ class CoefficientFactory(object):
     def _sum_transitions(self):
         coeffs = []
         for i in xrange(self.nuclear_charge):
-            c = self.ionisation_stages[i]
-            c = c.interpolate(self.temperature_grid, self.density_grid)
-            pec = c.sum_transitions()
+            c = self.ionisation_stages.get(i, None)
+            if c is None:
+                pec = np.zeros(self.temperature_grid.shape +
+                        self.density_grid.shape)
+            else:
+                c = c.interpolate(self.temperature_grid, self.density_grid)
+                pec = c.sum_transitions()
             coeffs.append(pec)
 
         coeffs = np.array(coeffs)
