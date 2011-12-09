@@ -2,6 +2,7 @@ import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
 from adf15 import Adf15
+from atomic_data import RateCoefficient
 
 class Transition(object):
     def __init__(self, type_, element, nuclear_charge, charge, wavelength,
@@ -17,18 +18,14 @@ class Transition(object):
         self.electron_temperature = temperature
         self.photon_emissivity = pec
 
-    def interpolate(self, temperature_grid, density_grid, log=True):
-        if log:
-            x = np.log10(self.electron_temperature) * 1e-6
-            y = np.log10(self.electron_density)
-            z = np.log10(self.photon_emissivity)
-        else:
-            x = self.temperature_grid
-            y = self.density_grid
-            z = self.photon_emissivity
+    def interpolate(self, temperature_grid, density_grid):
+        x = np.log10(self.electron_temperature)
+        y = np.log10(self.electron_density)
+        z = np.log10(self.photon_emissivity)
 
         sp = RectBivariateSpline(x, y, z)
-        pec = sp(temperature_grid, density_grid).diagonal()
+        pec = sp(np.log10(temperature_grid), np.log10(density_grid))
+        pec = 10**pec
 
         return self._on_new_grids(temperature_grid, density_grid, pec)
 
@@ -89,6 +86,8 @@ class TransitionPool(object):
         power = energies * coeffs
         power = power.sum(0)
 
+        assert power.all() > 0
+
         return power
 
     def interpolate(self, temperature_grid, density_grid):
@@ -139,13 +138,36 @@ def fetch_pec_data():
 
 from collections import defaultdict
 class CoefficientFactory(object):
-    def __init__(self, nuclear_charge, transition_pool):
+    def __init__(self, element, nuclear_charge, transition_pool):
+        self.element = element
         self.nuclear_charge = nuclear_charge
         self.transition_pool = transition_pool
         self.ionisation_stages = {}
 
     def create(self, temperature_grid, density_grid):
         self._sort_by_ionisation_stages()
+
+        coeffs = []
+        for i in xrange(self.nuclear_charge):
+            c = self.ionisation_stages[i]
+            c = c.interpolate(temperature_grid, density_grid)
+            pec = c.sum_transitions()
+            try:
+                assert np.all(pec > 0), '%s' % i
+            except AssertionError:
+                import pdb; pdb.set_trace()
+            coeffs.append(pec)
+
+        coeffs = np.array(coeffs)
+        data = {}
+        data['charge'] = self.nuclear_charge
+        data['element'] = self.element
+        data['name'] = 'custom' # FIXME
+        data['temperature'] = np.log10(temperature_grid)
+        data['density'] = np.log10(density_grid * 1e-6)
+        data['coeff_table'] = np.log10(coeffs * 1e6)
+    
+        return RateCoefficient(data)
 
     def _sort_by_ionisation_stages(self):
         d = defaultdict(TransitionPool)
@@ -168,25 +190,19 @@ if __name__ == '__main__':
     for f in glob.glob('adas_data/pec/pec96#c_pju*.dat'):
         pec.append_file(f)
 
+    te = np.logspace(0, 4)
+    ne = np.logspace(18, 20)
 
-    density = np.logspace(18, 20, 10)
-    temperature = np.logspace(0, 3, 10)
+    fact = CoefficientFactory('C', 6, pec.filter_type('ex'))
+    coeff_line_power = fact.create(te, ne)
 
-    fact = CoefficientFactory(6, pec.filter_type('ex'))
-    coeff = fact.create(temperature, density)
-
-
-if 0:
-    power = pec.filter_type('rec', 'ex').sum_transitions()
-    te = pec.transitions[0].electron_temperature
-    ne = pec.transitions[0].electron_density
+    fact = CoefficientFactory('C', 6, pec.filter_type('rec'))
+    coeff_cont_power = fact.create(te, ne)
 
     import atomic
     ad = atomic.element('carbon')
     cont_power = ad.coeffs['continuum_power']
     line_power = ad.coeffs['line_power']
-    #line_power = atomic.atomic_data.ZeroCoefficient()
-    #cont_power = atomic.atomic_data.ZeroCoefficient()
 
     import matplotlib.pyplot as plt
     plt.figure(1); plt.clf()
@@ -194,16 +210,25 @@ if 0:
     ax.set_xlim(1e0, 1e3)
 
     densities = [1e18, 1e19, 1e20]
+    densities = [1e19]
+    charge = 1
     for density_index in np.searchsorted(ne, densities):
-        c1 = line_power(3,te, ne[density_index])
-        c2 = cont_power(3,te, ne[density_index])
-        c = c1 + c2
+        c1 = line_power(charge, te, ne[density_index])
+        c2 = cont_power(charge, te, ne[density_index])
+
+        mc1 = coeff_line_power(charge, te, ne[density_index])
+        mc2 = coeff_cont_power(charge, te, ne[density_index])
+
         label = r'$n_\mathrm{e} = 10^{%d}\ \mathrm{m^{-3}}$' %\
             np.log10(ne[density_index])
-        line, = plt.loglog(te, c, 'o')
-        plt.loglog(te, power[:,density_index], color=line.get_color(),
-                label=label)
-    plt.legend(loc='best')
 
+        line, = plt.loglog(te, mc1, '+')
+        plt.loglog(te, c1, color=line.get_color(), label=label)
+
+        bremss = P_bremsstrahlung(charge, te, ne[density_index])
+        line, = plt.loglog(te, mc2 + bremss, 'o')
+        plt.loglog(te, c2, color=line.get_color(), label=label)
+
+    #plt.legend(loc='best')
     plt.draw()
     plt.show()
