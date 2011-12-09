@@ -1,8 +1,11 @@
+import glob
+
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
 from adf15 import Adf15
 from atomic_data import RateCoefficient
+
 
 class Transition(object):
     def __init__(self, type_, element, nuclear_charge, charge, wavelength,
@@ -125,15 +128,7 @@ def P_bremsstrahlung(k, Te, ne):
     """
     W m^3
     """
-    return 1.53e-38 * Te**0.5 * k**2
-
-
-def fetch_pec_data():
-    from atomic.adas import OpenAdas
-    db = OpenAdas()
-    res = db.search_adf15('carbon')
-    for r in res:
-        db.fetch(r, 'adas_data/pec')
+    return 1.53e-38 * Te**0.5 * (k + 1)**2
 
 
 from collections import defaultdict
@@ -143,31 +138,19 @@ class CoefficientFactory(object):
         self.nuclear_charge = nuclear_charge
         self.transition_pool = transition_pool
         self.ionisation_stages = {}
+        self.rate_coefficients = None
+
+        self.temperature_grid = None
+        self.density_grid = None
 
     def create(self, temperature_grid, density_grid):
+        self.temperature_grid = temperature_grid
+        self.density_grid = density_grid
+
         self._sort_by_ionisation_stages()
+        self._sum_transitions()
 
-        coeffs = []
-        for i in xrange(self.nuclear_charge):
-            c = self.ionisation_stages[i]
-            c = c.interpolate(temperature_grid, density_grid)
-            pec = c.sum_transitions()
-            try:
-                assert np.all(pec > 0), '%s' % i
-            except AssertionError:
-                import pdb; pdb.set_trace()
-            coeffs.append(pec)
-
-        coeffs = np.array(coeffs)
-        data = {}
-        data['charge'] = self.nuclear_charge
-        data['element'] = self.element
-        data['name'] = 'custom' # FIXME
-        data['temperature'] = np.log10(temperature_grid)
-        data['density'] = np.log10(density_grid * 1e-6)
-        data['coeff_table'] = np.log10(coeffs * 1e6)
-    
-        return RateCoefficient(data)
+        return self.rate_coefficients
 
     def _sort_by_ionisation_stages(self):
         d = defaultdict(TransitionPool)
@@ -178,57 +161,48 @@ class CoefficientFactory(object):
 
         self.ionisation_stages.update(d)
 
+    def _sum_transitions(self):
+        coeffs = []
+        for i in xrange(self.nuclear_charge):
+            c = self.ionisation_stages[i]
+            c = c.interpolate(self.temperature_grid, self.density_grid)
+            pec = c.sum_transitions()
+            coeffs.append(pec)
+
+        coeffs = np.array(coeffs)
+        data = {}
+        data['charge'] = self.nuclear_charge
+        data['element'] = self.element
+        data['name'] = 'custom' # FIXME
+        data['temperature'] = np.log10(self.temperature_grid)
+        data['density'] = np.log10(self.density_grid * 1e-6)
+        data['coeff_table'] = np.log10(coeffs * 1e6)
+    
+        self.rate_coefficients = RateCoefficient(data)
+
     def _conforming(self, t):
         return t.nuclear_charge == self.nuclear_charge
 
 
-if __name__ == '__main__':
+from atomic_data import AtomicData
+def filtered_atomic_data(ad, adf15_files, te, ne):
+    element = ad.element
+    nuclear_charge = ad.nuclear_charge
+
     pec = TransitionPool()
 
-    import glob
-
-    for f in glob.glob('adas_data/pec/pec96#c_pju*.dat'):
+    for f in glob.glob(adf15_files):
         pec.append_file(f)
 
-    te = np.logspace(0, 4)
-    ne = np.logspace(18, 20)
+    keys = [('ex', 'line_power'), ('rec', 'continuum_power'),
+            ('cx', 'cx_power')]
 
-    fact = CoefficientFactory('C', 6, pec.filter_type('ex'))
-    coeff_line_power = fact.create(te, ne)
+    coeffs = {}
+    for from_, to_ in keys:
+        fact = CoefficientFactory(element, nuclear_charge, pec.filter_type(from_))
+        c = fact.create(te, ne)
+        coeffs[to_] = c
 
-    fact = CoefficientFactory('C', 6, pec.filter_type('rec'))
-    coeff_cont_power = fact.create(te, ne)
-
-    import atomic
-    ad = atomic.element('carbon')
-    cont_power = ad.coeffs['continuum_power']
-    line_power = ad.coeffs['line_power']
-
-    import matplotlib.pyplot as plt
-    plt.figure(1); plt.clf()
-    ax = plt.gca()
-    ax.set_xlim(1e0, 1e3)
-
-    densities = [1e18, 1e19, 1e20]
-    densities = [1e19]
-    charge = 1
-    for density_index in np.searchsorted(ne, densities):
-        c1 = line_power(charge, te, ne[density_index])
-        c2 = cont_power(charge, te, ne[density_index])
-
-        mc1 = coeff_line_power(charge, te, ne[density_index])
-        mc2 = coeff_cont_power(charge, te, ne[density_index])
-
-        label = r'$n_\mathrm{e} = 10^{%d}\ \mathrm{m^{-3}}$' %\
-            np.log10(ne[density_index])
-
-        line, = plt.loglog(te, mc1, '+')
-        plt.loglog(te, c1, color=line.get_color(), label=label)
-
-        bremss = P_bremsstrahlung(charge, te, ne[density_index])
-        line, = plt.loglog(te, mc2 + bremss, 'o')
-        plt.loglog(te, c2, color=line.get_color(), label=label)
-
-    #plt.legend(loc='best')
-    plt.draw()
-    plt.show()
+    filtered_ad = AtomicData.from_element(ad.element)
+    filtered_ad.coeffs.update(coeffs)
+    return filtered_ad
