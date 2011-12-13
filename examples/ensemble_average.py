@@ -90,14 +90,14 @@ def time_dependent_z(solution, times, ensemble_average=False):
 
     ax = plt.gca()
     for y in solution.select_times(times):
-        ax.loglog(temperature, y.mean_charge(), color='black', ls='--')
+        ax.loglog(solution.temperature, y.mean_charge(), color='black', ls='--')
 
     ax.set_xlabel(r'$T_\mathrm{e}\ \mathrm{(eV)}$')
     ax.set_ylim(0.4, y.atomic_data.nuclear_charge + 4)
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
     z_mean = solution.y_coronal.mean_charge()
-    ax.loglog(temperature, z_mean, color='black')
+    ax.loglog(solution.temperature, z_mean, color='black')
 
     ax.set_title(title)
 
@@ -113,7 +113,7 @@ def time_dependent_power(solution, times, ensemble_average=False):
     ax = plt.gca()
     for y in solution.select_times(times):
         rad = atomic.Radiation(y)
-        ax.loglog(temperature, rad.specific_power['total'],
+        ax.loglog(solution.temperature, rad.specific_power['total'],
                 color='black', ls='--')
 
     ax.set_xlabel(r'$T_\mathrm{e}\ \mathrm{(eV)}$')
@@ -121,7 +121,7 @@ def time_dependent_power(solution, times, ensemble_average=False):
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
     power_coronal = atomic.Radiation(solution.y_coronal).specific_power['total']
-    ax.loglog(temperature, power_coronal, color='black')
+    ax.loglog(solution.temperature, power_coronal, color='black')
 
     ax.set_title(title)
 
