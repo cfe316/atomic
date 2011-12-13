@@ -52,10 +52,10 @@ class TransitionPool(object):
         datablocks = f['datablocks']
 
         for d in datablocks:
-            wavelength = d['wavelength'] * 1e-10
+            wavelength = d['wavelength']
             temperature = d['temperature']
-            density = d['density'] * 1e6
-            pec = d['pec'] * 1e-6
+            density = d['density']
+            pec = d['pec']
             type_ = d['type']
 
             t = Transition(type_, element, nuclear_charge, charge, wavelength,
@@ -179,9 +179,9 @@ class CoefficientFactory(object):
         data['element'] = self.element
         data['name'] = 'custom' # FIXME
         data['temperature'] = np.log10(self.temperature_grid)
-        data['density'] = np.log10(self.density_grid * 1e-6)
-        data['coeff_table'] = np.log10(coeffs * 1e6)
-    
+        data['density'] = np.log10(self.density_grid)
+        data['coeff_table'] = np.log10(coeffs)
+
         self.rate_coefficients = RateCoefficient(data)
 
     def _conforming(self, t):

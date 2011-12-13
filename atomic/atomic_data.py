@@ -97,9 +97,9 @@ class RateCoefficient(object):
         self.element = adf11_data['element']
         self.adf11_file = adf11_data['name']
 
-        self.log_temperature = adf11_data['temperature']
-        self.log_density = adf11_data['density']
-        self.log_coeff = adf11_data['coeff_table']
+        self.log_temperature = adf11_data['log_temperature']
+        self.log_density = adf11_data['log_density']
+        self.log_coeff = adf11_data['log_coeff']
 
         self._compute_interpolating_splines()
 
@@ -157,10 +157,9 @@ class RateCoefficient(object):
 
         Te, ne = np.broadcast_arrays(Te, ne)
         log_temperature = np.log10(Te)
-        log_density = np.log10(ne * 1e-6)
+        log_density = np.log10(ne)
 
         c = self.splines[k](log_temperature, log_density)
-        c -= 6 # log10(cm3/s) => log10(m3/s)
         return c.diagonal()
 
 from sys import float_info

@@ -63,14 +63,18 @@ class Adf11(object):
 
         d = {}
         d['charge'] = iz0
-        d['density'] = ddens[:idmax]
-        d['temperature'] = dtev[:itmax]
+        d['log_density'] = ddens[:idmax]
+        d['log_temperature'] = dtev[:itmax]
         d['number_of_charge_states'] = ismax
-        d['coeff_table'] = drcof[:ismax, :itmax, :idmax]
+        d['log_coeff'] = drcof[:ismax, :itmax, :idmax]
 
         d['class'] = self.class_
         d['element'] = self.element
         d['name'] = self.name
+
+        # convert everything to SI + eV units
+        d['log_density'] += 6 # log(cm^-3) = log(10^6 m^-3) = 6 + log(m^-3)
+        d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
         return d
 
     def _sniff_class(self):
