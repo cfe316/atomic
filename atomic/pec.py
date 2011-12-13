@@ -54,9 +54,7 @@ class TransitionPool(object):
     @classmethod
     def from_adf15(cls, files):
         obj = cls()
-        for f in glob.glob(files):
-            obj.append_file(f)
-
+        obj.append_files(files)
         return obj
 
     def create_atomic_data(self, ad):
@@ -74,6 +72,10 @@ class TransitionPool(object):
         filtered_ad = ad.copy()
         filtered_ad.coeffs.update(coeffs)
         return filtered_ad
+
+    def append_files(self, files):
+        for f in glob.glob(files):
+            self.append_file(f)
 
     def append_file(self, filename):
         f = Adf15(filename).read()
@@ -151,6 +153,10 @@ class TransitionPool(object):
 
     def __iter__(self):
         return self.transitions.__iter__()
+
+    @property
+    def size(self):
+        return len(self.transitions)
 
 
 def P_bremsstrahlung(k, Te, ne):
