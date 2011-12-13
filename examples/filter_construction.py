@@ -40,11 +40,10 @@ def plot_coeffs(ad, te, charge, **kwargs):
 
 
 if __name__ == '__main__':
-    te = np.logspace(0, 3)
-    ne = np.logspace(19, 21)
-
     ad = atomic.element('carbon')
-    ad_filtered = filtered_atomic_data(ad, 'adas_data/pec/pec96#c_pju*.dat', te, ne)
+    ad_filtered = filtered_atomic_data(ad, 'adas_data/pec/pec96#c_pju*.dat')
+
+    te = np.logspace(0, 3)
 
     f = plt.figure(1); f.clf()
 

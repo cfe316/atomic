@@ -188,7 +188,7 @@ class CoefficientFactory(object):
 
 
 from atomic_data import AtomicData
-def filtered_atomic_data(ad, adf15_files, te, ne):
+def filtered_atomic_data(ad, adf15_files):
     element = ad.element
     nuclear_charge = ad.nuclear_charge
 
@@ -202,6 +202,8 @@ def filtered_atomic_data(ad, adf15_files, te, ne):
 
     coeffs = {}
     for from_, to_ in keys:
+        te = ad.coeffs[to_].temperature_grid
+        ne = ad.coeffs[to_].density_grid
         fact = CoefficientFactory(element, nuclear_charge, pec.filter_type(from_))
         c = fact.create(te, ne)
         coeffs[to_] = c

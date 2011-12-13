@@ -176,6 +176,14 @@ class RateCoefficient(object):
         c = self.splines[k](log_temperature, log_density)
         return c.diagonal()
 
+    @property
+    def temperature_grid(self):
+        return 10**(self.log_temperature)
+
+    @property
+    def density_grid(self):
+        return 10**(self.log_density)
+
 from sys import float_info
 class ZeroCoefficient(RateCoefficient):
     def __init__(self, adf11_data=None):
