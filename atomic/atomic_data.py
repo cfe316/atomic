@@ -73,7 +73,7 @@ class AtomicData(object):
         element = set()
         for coeff in self.coeffs.values():
             nuclear_charge.add(coeff.nuclear_charge)
-            element.add(coeff.element)
+            element.add(coeff.element.lower())
 
         assert len(nuclear_charge) == 1, 'inconsistent nuclear charge.'
         assert len(element) == 1, 'inconsistent element name.'
