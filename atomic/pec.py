@@ -175,14 +175,13 @@ class CoefficientFactory(object):
 
         coeffs = np.array(coeffs)
         data = {}
-        data['charge'] = self.nuclear_charge
-        data['element'] = self.element
-        data['name'] = 'custom' # FIXME
-        data['temperature'] = np.log10(self.temperature_grid)
-        data['density'] = np.log10(self.density_grid)
-        data['coeff_table'] = np.log10(coeffs)
 
-        self.rate_coefficients = RateCoefficient(data)
+        log_temperature = np.log10(self.temperature_grid)
+        log_density = np.log10(self.density_grid)
+        log_coeff = np.log10(coeffs)
+
+        self.rate_coefficients = RateCoefficient(self.nuclear_charge,
+                self.element, log_temperature, log_density, log_coeff)
 
     def _conforming(self, t):
         return t.nuclear_charge == self.nuclear_charge

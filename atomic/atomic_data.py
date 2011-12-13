@@ -81,8 +81,7 @@ class AtomicData(object):
         coefficients = {}
         for key in element_data.keys():
             name = _full_path(element_data[key])
-            adf11_data = Adf11(name).read()
-            coefficients[key] = RateCoefficient(adf11_data)
+            coefficients[key] = RateCoefficient.from_adf11(name)
 
         return cls(coefficients)
 
@@ -92,16 +91,31 @@ class AtomicData(object):
 
 
 class RateCoefficient(object):
-    def __init__(self, adf11_data):
-        self.nuclear_charge = adf11_data['charge']
-        self.element = adf11_data['element']
-        self.adf11_file = adf11_data['name']
+    def __init__(self, nuclear_charge, element, log_temperature, log_density,
+            log_coeff, name=None):
+        self.nuclear_charge = nuclear_charge
+        self.element = element
+        self.adf11_file = name
 
-        self.log_temperature = adf11_data['log_temperature']
-        self.log_density = adf11_data['log_density']
-        self.log_coeff = adf11_data['log_coeff']
+        self.log_temperature = log_temperature
+        self.log_density = log_density
+        self.log_coeff = log_coeff
 
         self._compute_interpolating_splines()
+
+    @classmethod
+    def from_adf11(cls, name):
+        adf11_data = Adf11(name).read()
+        nuclear_charge = adf11_data['charge']
+        element = adf11_data['element']
+        filename = adf11_data['name']
+
+        log_temperature = adf11_data['log_temperature']
+        log_density = adf11_data['log_density']
+        log_coeff = adf11_data['log_coeff']
+
+        return cls(nuclear_charge, element, log_temperature, log_density,
+                log_coeff, name=filename)
 
     def _compute_interpolating_splines(self):
         self.splines = []
