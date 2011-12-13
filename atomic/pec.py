@@ -133,9 +133,10 @@ def P_bremsstrahlung(k, Te, ne):
 
 from collections import defaultdict
 class CoefficientFactory(object):
-    def __init__(self, element, nuclear_charge, transition_pool):
-        self.element = element
-        self.nuclear_charge = nuclear_charge
+    def __init__(self, atomic_data, transition_pool):
+        self.atomic_data = atomic_data
+        self.element = atomic_data.element
+        self.nuclear_charge = atomic_data.nuclear_charge
         self.transition_pool = transition_pool
         self.ionisation_stages = {}
         self.rate_coefficients = None
@@ -187,7 +188,6 @@ class CoefficientFactory(object):
         return t.nuclear_charge == self.nuclear_charge
 
 
-from atomic_data import AtomicData
 def filtered_atomic_data(ad, adf15_files):
     element = ad.element
     nuclear_charge = ad.nuclear_charge
@@ -204,10 +204,10 @@ def filtered_atomic_data(ad, adf15_files):
     for from_, to_ in keys:
         te = ad.coeffs[to_].temperature_grid
         ne = ad.coeffs[to_].density_grid
-        fact = CoefficientFactory(element, nuclear_charge, pec.filter_type(from_))
+        fact = CoefficientFactory(ad, pec.filter_type(from_))
         c = fact.create(te, ne)
         coeffs[to_] = c
 
-    filtered_ad = AtomicData.from_element(ad.element)
+    filtered_ad = ad.copy()
     filtered_ad.coeffs.update(coeffs)
     return filtered_ad

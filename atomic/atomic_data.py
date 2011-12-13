@@ -61,6 +61,13 @@ class AtomicData(object):
         self._check_consistency()
         self._make_element_initial_uppercase()
 
+    def copy(self):
+        new_coeffs = {}
+        for key, value in self.coeffs.iteritems():
+            new_coeffs[key] = value.copy()
+
+        return self.__class__(new_coeffs)
+
     def _check_consistency(self):
         nuclear_charge = set()
         element = set()
@@ -116,6 +123,14 @@ class RateCoefficient(object):
 
         return cls(nuclear_charge, element, log_temperature, log_density,
                 log_coeff, name=filename)
+
+    def copy(self):
+        log_temperature = self.log_temperature.copy()
+        log_density = self.log_density.copy()
+        log_coeff = self.log_coeff.copy()
+        cls = self.__class__(self.nuclear_charge, self.element, log_temperature,
+                log_density, log_coeff, self.adf11_file)
+        return cls
 
     def _compute_interpolating_splines(self):
         self.splines = []
@@ -186,9 +201,6 @@ class RateCoefficient(object):
 
 from sys import float_info
 class ZeroCoefficient(RateCoefficient):
-    def __init__(self, adf11_data=None):
-        pass
-
     def __call__(self, k, Te, ne):
         Te, ne = np.broadcast_arrays(Te, ne)
         return float_info.min * np.ones_like(Te)
