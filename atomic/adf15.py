@@ -82,7 +82,7 @@ class Adf15(object):
 
             # convert everything to SI + eV units
             b['density'] *= 1e6 # cm^-3 = 10^6 m^-3
-            b['pec'] -= 6 # log(cm^3/s) = -6 + log(m^3/s)
+            b['pec'] *= 1e-6 # cm^3/s = 10^-6 m^3/s
             b['wavelength'] *= 1e-10 # A = 10^-10 m
             datablocks.append(b)
 
