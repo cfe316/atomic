@@ -2,6 +2,7 @@ import glob
 
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
+import scipy.constants as constants
 
 from adf15 import Adf15
 from atomic_data import RateCoefficient
@@ -37,12 +38,42 @@ class Transition(object):
                 self.charge, self.wavelength, new_temperature, new_density,
                 new_pec)
 
+    @property
+    def energy(self):
+        h, c = constants.h, constants.c
+        lambda_ = self.wavelength
+        return h * c / lambda_
+
 
 class TransitionPool(object):
     def __init__(self, transitions=None):
         if transitions == None: transitions = []
 
         self.transitions = transitions
+
+    @classmethod
+    def from_adf15(cls, files):
+        obj = cls()
+        for f in glob.glob(files):
+            obj.append_file(f)
+
+        return obj
+
+    def create_atomic_data(self, ad):
+        keys = [('ex', 'line_power'), ('rec', 'continuum_power'),
+                ('cx', 'cx_power')]
+
+        coeffs = {}
+        for from_, to_ in keys:
+            te = ad.coeffs[to_].temperature_grid
+            ne = ad.coeffs[to_].density_grid
+            fact = CoefficientFactory(ad, self.filter_type(from_))
+            c = fact.create(te, ne)
+            coeffs[to_] = c
+
+        filtered_ad = ad.copy()
+        filtered_ad.coeffs.update(coeffs)
+        return filtered_ad
 
     def append_file(self, filename):
         f = Adf15(filename).read()
@@ -67,6 +98,13 @@ class TransitionPool(object):
         new_transitions = filter(lambda t: t.type_ in names, self.transitions)
         return self.__class__(new_transitions)
 
+    def filter_energy(self, lo, hi, unit='eV'):
+        lo_ = lo * constants.elementary_charge
+        hi_ = hi * constants.elementary_charge
+        in_roi = lambda t: (lo_ <= t.energy) and (t.energy < hi_)
+        new_transitions = filter(in_roi, self.transitions)
+        return self.__class__(new_transitions)
+
     def _interpret_type(self, *type_names):
         return map(self._figure_out_type, type_names)
 
@@ -82,9 +120,9 @@ class TransitionPool(object):
         return name
 
     def sum_transitions(self):
-        energies = wavelength_to_joule(self.wavelengths)
-        energies = energies[:, np.newaxis, np.newaxis]
+        energies = self.energies
         coeffs = self.coeffs
+        energies = energies[:, np.newaxis, np.newaxis]
 
         power = energies * coeffs
         power = power.sum(0)
@@ -104,12 +142,8 @@ class TransitionPool(object):
         return np.array([t.wavelength for t in self.transitions])
 
     @property
-    def electron_densities(self):
-        return np.array([t.electron_density for t in self.transitions])
-
-    @property
-    def electron_temperatures(self):
-        return np.array([t.electron_temperature for t in self.transitions])
+    def energies(self):
+        return np.array([t.energy for t in self.transitions])
 
     @property
     def coeffs(self):
@@ -117,11 +151,6 @@ class TransitionPool(object):
 
     def __iter__(self):
         return self.transitions.__iter__()
-
-
-def wavelength_to_joule(lambda_):
-    from scipy.constants import h, c
-    return h * c / lambda_
 
 
 def P_bremsstrahlung(k, Te, ne):
@@ -187,27 +216,3 @@ class CoefficientFactory(object):
     def _conforming(self, t):
         return t.nuclear_charge == self.nuclear_charge
 
-
-def filtered_atomic_data(ad, adf15_files):
-    element = ad.element
-    nuclear_charge = ad.nuclear_charge
-
-    pec = TransitionPool()
-
-    for f in glob.glob(adf15_files):
-        pec.append_file(f)
-
-    keys = [('ex', 'line_power'), ('rec', 'continuum_power'),
-            ('cx', 'cx_power')]
-
-    coeffs = {}
-    for from_, to_ in keys:
-        te = ad.coeffs[to_].temperature_grid
-        ne = ad.coeffs[to_].density_grid
-        fact = CoefficientFactory(ad, pec.filter_type(from_))
-        c = fact.create(te, ne)
-        coeffs[to_] = c
-
-    filtered_ad = ad.copy()
-    filtered_ad.coeffs.update(coeffs)
-    return filtered_ad

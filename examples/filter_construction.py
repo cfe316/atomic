@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import atomic
-from atomic.pec import filtered_atomic_data
+from atomic.pec import TransitionPool
 
 
 def fetch_pec_data():
@@ -41,7 +41,10 @@ def plot_coeffs(ad, te, charge, **kwargs):
 
 if __name__ == '__main__':
     ad = atomic.element('carbon')
-    ad_filtered = filtered_atomic_data(ad, 'adas_data/pec/pec96#c_pju*.dat')
+
+    tp = TransitionPool.from_adf15('adas_data/pec/pec96#c_pju*.dat')
+    #tp = tp.filter_energy(2e3, 20e3, 'eV')
+    ad_filtered = tp.create_atomic_data(ad)
 
     te = np.logspace(0, 3)
 
