@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import atomic
-from time_dependent_z import annotate_lines
+from ensemble_average import annotate_lines
 
 def parabolic_profile(y0):
     x = np.linspace(1., 0, 50)
