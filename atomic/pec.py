@@ -129,6 +129,7 @@ class TransitionPool(object):
         power = energies * coeffs
         power = power.sum(0)
 
+        assert np.all(np.isinf(power)) == False
         assert power.all() > 0
 
         return power
@@ -168,7 +169,7 @@ def P_bremsstrahlung(k, Te, ne):
 
 from collections import defaultdict
 class CoefficientFactory(object):
-    def __init__(self, atomic_data, transition_pool):
+    def __init__(self, atomic_data, transition_pool, clip_limit=1e-80):
         self.atomic_data = atomic_data
         self.element = atomic_data.element
         self.nuclear_charge = atomic_data.nuclear_charge
@@ -178,6 +179,7 @@ class CoefficientFactory(object):
 
         self.temperature_grid = None
         self.density_grid = None
+        self.clip_limit = clip_limit
 
     def create(self, temperature_grid, density_grid):
         self.temperature_grid = temperature_grid
@@ -212,6 +214,7 @@ class CoefficientFactory(object):
         coeffs = np.array(coeffs)
         data = {}
 
+        coeffs = coeffs.clip(self.clip_limit)
         log_temperature = np.log10(self.temperature_grid)
         log_density = np.log10(self.density_grid)
         log_coeff = np.log10(coeffs)
