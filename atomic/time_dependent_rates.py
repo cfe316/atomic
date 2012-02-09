@@ -91,6 +91,40 @@ class RateEquations(object):
 
         return dydt.ravel()
 
+    def derivs_optimized_2(self, y_, t0):
+        """
+        Optimised version of derivs using the roll function.  Probably
+        consumes more memory than derivs_optimized().  However it is kept
+        here for eduactional purposes.
+        """
+
+        dydt = self.dydt
+        S = self.S
+        alpha_to = self.alpha
+        ne = self.density
+
+        y = y_.reshape(self.y_shape)
+
+        y_lower = np.roll(y, +1, axis=0)
+        y_upper = np.roll(y, -1, axis=0)
+        S_lower = np.roll(S, +1, axis=0)
+        alpha_to_lower = np.roll(alpha_to, +1, axis=0)
+
+        dydt  = y_lower * S_lower
+        dydt += y_upper * alpha_to
+        dydt -= y * S
+        dydt -= y * alpha_to_lower
+
+        current, upper = 0, 1 # neutral and single ionised state
+        dydt[current] = y[upper] * alpha_to[current] - y[current] * S[current]
+
+        current, lower = -1, -2 # fully stripped and 1 electron state
+        dydt[current] = y[lower] * S[lower] - y[current] * alpha_to[lower]
+        dydt *= ne
+
+        return dydt.ravel()
+
+
     def solve(self, time, temperature, density):
         """
         Integrate the rate equations.
