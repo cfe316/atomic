@@ -96,6 +96,14 @@ class RateEquations(object):
         Optimised version of derivs using the roll function.  Probably
         consumes more memory than derivs_optimized().  However it is kept
         here for eduactional purposes.
+
+        A demonstration that np.roll() copies data in memory:
+        >>> a = arange(10)
+        >>> b = np.roll(a, 1)
+        >>> b.base is a
+        False
+        >>> np.may_share_memory(a, b)
+        False
         """
 
         dydt = self.dydt
