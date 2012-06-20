@@ -35,12 +35,19 @@ class Adf15(object):
         return self._convert_to_dictionary()
 
     def _read_xxdata_15(self):
+        null_fds = os.open(os.devnull, os.O_RDWR)
+        save = os.dup(1)
+        os.dup2(null_fds, 1)
+
         iunit = _xxdata_15.helper_open_file(self.name)
         dsname = os.path.basename(self.name)
         ret =  _xxdata_15.xxdata_15(iunit, dsname, **parameters)
         _xxdata_15.helper_close_file(iunit)
 
         self._raw_return_value = ret
+
+        os.dup2(save, 1) # restore stdout
+        os.close(null_fds) # close the temporary fds
 
     def _convert_to_dictionary(self):
         ret = self._raw_return_value

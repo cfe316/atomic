@@ -48,12 +48,19 @@ class Adf11(object):
         return self._convert_to_dictionary()
 
     def _read_xxdata_11(self):
+        null_fds = os.open(os.devnull, os.O_RDWR)
+        save = os.dup(1)
+        os.dup2(null_fds, 1)
+
         iclass = adf11_classes[self.class_]
         iunit = _xxdata_11.helper_open_file(self.name)
         ret =  _xxdata_11.xxdata_11(iunit, iclass, **parameters)
         _xxdata_11.helper_close_file(iunit)
 
         self._raw_return_value = ret
+
+        os.dup2(save, 1) # restore stdout
+        os.close(null_fds) # close the temporary fds
 
     def _convert_to_dictionary(self):
         ret = self._raw_return_value
