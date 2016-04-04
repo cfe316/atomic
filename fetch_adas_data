@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import atomic.adas as adas
 
 atomic_data = './adas_data'
