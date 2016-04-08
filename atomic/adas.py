@@ -1,4 +1,5 @@
 import os
+import errno
 import shutil
 import urllib
 
@@ -22,10 +23,13 @@ class OpenAdas(object):
             dst_directory = os.curdir
         self.dst_directory = dst_directory
 
-        dst_filename = os.path.join(self.dst_directory, url_filename[1])
-
         url = self._construct_url(url_filename)
+        path = self._construct_path(url_filename)
         tmpfile, msg = urllib.urlretrieve(url)
+
+        dst_filename = os.path.join(self.dst_directory, path)
+
+        self._mkdir_p(os.path.dirname(dst_filename))
 
         shutil.move(tmpfile, dst_filename)
 
@@ -38,6 +42,26 @@ class OpenAdas(object):
         url, filename = url_filename
         query = url.replace('detail','download')
         return open_adas + query
+
+    def _construct_path(self, url_filename):
+        """
+        >>> db = OpenAdas()
+        >>> db._construct_url(('detail/adf11/prb96/prb96_c.dat', 'foo.dat'))
+        'adf11/prb96/prb96_c.dat'
+        """
+        url, filename = url_filename
+        path = url.replace('detail/','')
+        path = path.replace('][','#')
+        return path
+
+    def _mkdir_p(self,path):
+        try:
+            os.makedirs(path)
+        except OSError as exc:  # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
 
 
 class AdasSearch(object):
