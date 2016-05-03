@@ -4,12 +4,20 @@ src/xxdata_11/xxdata_11-f2pywrappers.f
 src/xxdata_11/xxdata_11.pyf
 src/xxdata_11/xxdata_11.so
 src/xxdata_11/xxdata_11module.c
+src/_xxdata_11module.c
+src/_xxdata_15module.c
 
 atomic/_xxdata_11.so
 atomic/_xxdata_15.so
 
-adas_data/*.dat
+build/
 
+adas_data/*.dat
+adas_data_hierarchy/
+
+*.vim
 *.swp
 *.pyc
 .sconsign.dblite
+
+*graph.ps

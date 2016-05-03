@@ -21,7 +21,7 @@ try:
 except NameError:
     from atomic.pec import TransitionPool
     ad = atomic.element('argon')
-    tp = TransitionPool.from_adf15('adas_data/pec/transport_llu#ar*.dat')
+    tp = TransitionPool.from_adf15('adas_data/transport_llu#ar*.dat')
     ad = tp.filter_energy(2e3, 20e3, 'eV').create_atomic_data(ad)
 
 eq = atomic.CoronalEquilibrium(ad)

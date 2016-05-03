@@ -5,7 +5,15 @@ from scipy.interpolate import RectBivariateSpline
 
 from adf11 import Adf11
 
+lithium_year = 96
+lithium_data = {
+    'ionisation' : 'scd96_li.dat',
+    'recombination' : 'acd96_li.dat',
+    'continuum_power' : 'prb96_li.dat',
+    'line_power' : 'plt96_li.dat',
+}
 
+argon_year = 89
 argon_data = {
     'ionisation' : 'scd89_ar.dat',
     'recombination' : 'acd89_ar.dat',
@@ -14,6 +22,7 @@ argon_data = {
     'cx_power' : 'prc89_ar.dat',
 }
 
+carbon_year = 96
 carbon_data = {
     'ionisation' : 'scd96_c.dat',
     'recombination' : 'acd96_c.dat',
@@ -22,6 +31,8 @@ carbon_data = {
     'cx_power' : 'prc96_c.dat',
 }
 
+
+neon_year = 96
 neon_data = {
     'ionisation' : 'scd96_ne.dat',
     'recombination' : 'acd96_ne.dat',
@@ -31,10 +42,12 @@ neon_data = {
 
 def _element_data(element):
     e = element.lower()
-    if e in ['ar', 'argon']:
-        return argon_data
+    if e in ['li', 'lithium']:
+        return lithium_data
     elif e in ['c', 'carbon']:
         return carbon_data
+    elif e in ['ar', 'argon']:
+        return argon_data
     elif e in ['ne', 'neon']:
         return neon_data
     else:
@@ -42,9 +55,12 @@ def _element_data(element):
 
 
 def _full_path(file_):
-    """ Figure out the location of the atomic datafiles. """
+    """ Figure out the location of the atomic datafiles.
+        Files are all located in adas_data, which is at the same level
+        as the package directory, so to get there we must go up one.
+    """
     module_path = os.path.dirname(os.path.realpath( __file__ ))
-    return os.path.join(module_path, '..', 'adas_data', file_)
+    return os.path.realpath(os.path.join(module_path, '..', 'adas_data', file_))
 
 
 class AtomicData(object):
@@ -207,3 +223,8 @@ class ZeroCoefficient(RateCoefficient):
     def __call__(self, k, Te, ne):
         Te, ne = np.broadcast_arrays(Te, ne)
         return float_info.min * np.ones_like(Te)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

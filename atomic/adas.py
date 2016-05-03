@@ -24,12 +24,17 @@ class OpenAdas(object):
         self.dst_directory = dst_directory
 
         url = self._construct_url(url_filename)
-        path = self._construct_path(url_filename)
-        tmpfile, msg = urllib.urlretrieve(url)
+        nested = False # this switch makes files save flat
+        if nested:
+            path = self._construct_path(url_filename)
+        else:
+            __, path = url_filename
+
+        tmpfile, __ = urllib.urlretrieve(url)
 
         dst_filename = os.path.join(self.dst_directory, path)
-
         self._mkdir_p(os.path.dirname(dst_filename))
+
 
         shutil.move(tmpfile, dst_filename)
 
@@ -39,14 +44,15 @@ class OpenAdas(object):
         >>> db._construct_url(('detail/adf11/prb96/prb96_c.dat', 'foo.dat'))
         'http://open.adas.ac.uk/download/adf11/prb96/prb96_c.dat'
         """
-        url, filename = url_filename
+        url, __ = url_filename
         query = url.replace('detail','download')
         return open_adas + query
 
     def _construct_path(self, url_filename):
         """
+        This function constructs a path to store the file in.
         >>> db = OpenAdas()
-        >>> db._construct_url(('detail/adf11/prb96/prb96_c.dat', 'foo.dat'))
+        >>> db._construct_path(('detail/adf11/prb96/prb96_c.dat', 'foo.dat'))
         'adf11/prb96/prb96_c.dat'
         """
         url, filename = url_filename
@@ -81,7 +87,7 @@ class AdasSearch(object):
 
     def _retrieve_search_page(self):
         search_url =  self.url + urllib.urlencode(self.parameters)
-        res, msg = urllib.urlretrieve(search_url)
+        res, __ = urllib.urlretrieve(search_url)
         self.data = open(res).read()
         os.remove(res)
 
@@ -109,7 +115,7 @@ class AdasSearch(object):
         return db
 
     def _strip_url(self, url):
-        _, id_ = url.split('=')
+        __, id_ = url.split('=')
         return int(id_)
 
 
@@ -155,9 +161,9 @@ class SearchPageParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if (tag == 'table' 
+        if (tag == 'table'
                 and 'summary' in attrs
-                and 'Results' in attrs['summary']): 
+                and 'Results' in attrs['summary']):
             self.search_results = True
         if not self.search_results: return
 

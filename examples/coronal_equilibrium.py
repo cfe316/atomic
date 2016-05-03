@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 
 import atomic
 
-elements = ['C', 'Ne', 'Ar']
+elements = ['Li', 'C', 'Ne', 'Ar']
 
 temperature_ranges = {
+    'Li' : np.logspace(-1,3, 300),
     'C'  : np.logspace(0,3, 300),
     'Ne' : np.logspace(0,4, 300),
     'Ar' : np.logspace(0,5, 300),
