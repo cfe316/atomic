@@ -41,6 +41,18 @@ neon_data = {
 }
 
 def _element_data(element):
+    """Give a dictionary of ADF11 file names available for the given element.
+
+    Args:
+        element: a string like 'Li' or 'lithium'
+    Returns:
+        a dictionary of file names.
+
+    {'ionisation' : 'scd96_li.dat',
+    'recombination' : 'acd96_li.dat',
+    ...
+    }
+    """
     e = element.lower()
     if e in ['li', 'lithium']:
         return lithium_data
@@ -55,10 +67,11 @@ def _element_data(element):
 
 
 def _full_path(file_):
-    """ Figure out the location of the atomic datafiles.
+    """ Figure out the location of an atomic datafile.
         Files are all located in adas_data, which is at the same level
         as the package directory, so to get there we must go up one.
     """
+    # __file__ is the location of atomic_data.py
     module_path = os.path.dirname(os.path.realpath( __file__ ))
     return os.path.realpath(os.path.join(module_path, '..', 'adas_data', file_))
 
@@ -68,8 +81,6 @@ class AtomicData(object):
         """
         Parameters
         ----------
-        element : string
-            Name of the element.
         coefficients : dict
             Map of the different rate coefficients.
         """
@@ -85,6 +96,8 @@ class AtomicData(object):
         return self.__class__(new_coeffs)
 
     def _check_consistency(self):
+        # why the use of set here?
+        # what is this meant to check? (how could it fail?)
         nuclear_charge = set()
         element = set()
         for coeff in self.coeffs.values():

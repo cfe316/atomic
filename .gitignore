@@ -21,3 +21,6 @@ adas_data_hierarchy/
 .sconsign.dblite
 
 *graph.ps
+
+*profile.prof
+*.pythoscope

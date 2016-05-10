@@ -4,7 +4,7 @@ import numpy as np
 class FractionalAbundance(object):
     def __init__(self, atomic_data, y, temperature, density):
         self.atomic_data = atomic_data
-        self.y = y # what is y representing?
+        self.y = y # fractional abundances of each charge state
         self.temperature = temperature
         self.density = density
 
@@ -12,8 +12,12 @@ class FractionalAbundance(object):
         """
         Compute the mean charge:
             <Z> = sum_k ( y_k * k )
+
+        Assumes that y is a 2D array with shape
+        (nuclear_charge+1,# of temperatures)
         """
 
+        # make a 2D array [[0],[1],[2],...]
         k = np.arange(self.y.shape[0])
         k = k[:,np.newaxis]
 
