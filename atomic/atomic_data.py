@@ -52,6 +52,8 @@ def _element_data(element):
     'recombination' : 'acd96_li.dat',
     ...
     }
+
+    This could presumably be made more general, especially with automated lookup of files.
     """
     e = element.lower()
     if e in ['li', 'lithium']:
@@ -77,29 +79,47 @@ def _full_path(file_):
 
 
 class AtomicData(object):
+    """
+    Attributes:
+        element (string): the element symbol, like 'Li' or 'C'
+        coeffs (dict): a dictionary of RateCoefficient objects
+            with keys like 'ionisation'
+        nuclear_charge (int) : the element's Z
+
+    """
     def __init__(self, coefficients):
         """
-        Parameters
-        ----------
-        coefficients : dict
-            Map of the different rate coefficients.
+        Args:
+            coefficients (dict):
+                The rate coefficients, as RateCoefficient objects.
         """
         self.coeffs = coefficients
         self._check_consistency()
         self._make_element_initial_uppercase()
 
     def copy(self):
+        """Make a new object that is a copy of this one.
+
+        This is used in pec.py's TransitionPool.
+        """
         new_coeffs = {}
+        #iteritems() is a method on dicts that gives an iterator
         for key, value in self.coeffs.iteritems():
             new_coeffs[key] = value.copy()
 
         return self.__class__(new_coeffs)
 
     def _check_consistency(self):
-        # why the use of set here?
-        # what is this meant to check? (how could it fail?)
+        """Add the nuclear_charge and element attributes.
+
+        Each individual RateCoefficient object has its own copy of the
+        nuclear_charge, say 3 for Li. Because a set() can only contain one copy
+        of the number 3, testing for len == 1 ensures that all the files
+        correspond to the same nucleus.
+        """
         nuclear_charge = set()
         element = set()
+        #coeff are the RateCoefficient objects
         for coeff in self.coeffs.values():
             nuclear_charge.add(coeff.nuclear_charge)
             element.add(coeff.element.lower())
@@ -112,12 +132,23 @@ class AtomicData(object):
 
     @classmethod
     def from_element(cls, element):
+        """This is a variant constructor.
+        It returns an instance of the class for a given element,
+        looking up data values automatically. This is in contrast to the regular constructor,
+        which requires you to already have the coeffiecients.
+
+        Args:
+            element: a string like 'Li' or 'lithium'
+        Returns:
+            An AtomicData class
+        """
+        # gets a list of filenames for 'ionisation', 'recombination', etc.
         element_data = _element_data(element)
 
         coefficients = {}
-        for key in element_data.keys():
-            name = _full_path(element_data[key])
-            coefficients[key] = RateCoefficient.from_adf11(name)
+        for key, value in element_data.iteritems():
+            fullfilename = _full_path(value)
+            coefficients[key] = RateCoefficient.from_adf11(fullfilename)
 
         return cls(coefficients)
 
@@ -127,6 +158,22 @@ class AtomicData(object):
 
 
 class RateCoefficient(object):
+    """Interpolation tables for the rate of some physical process.
+
+    Contains one 2D spline interpolator for each charge state,
+    of an element, for one process like 'ionisation', 'recombination'.
+
+    Attributes:
+        nuclear_charge (int): The element's Z.
+        element (str): Short element name like 'c' or 'ar'.
+        adf11_file (str): The /full/filename it came from.
+        log_temperature: np.array of log10 of temperature values
+        log_density: np.array of log10 of density values
+        log_coeff: a 3D np.array with shape (Z, temp, dens)
+        splines: list of scipy.interpolate.fitpack2.RectBivariateSpline
+            The list has length Z and is interpolations of log_coeff.
+
+    """
     def __init__(self, nuclear_charge, element, log_temperature, log_density,
             log_coeff, name=None):
         self.nuclear_charge = nuclear_charge
@@ -141,10 +188,17 @@ class RateCoefficient(object):
 
     @classmethod
     def from_adf11(cls, name):
+        """Instantiate a RateCoefficient by reading in an adf11 file.
+
+        Args:
+            name: The /full/name/of/an/adf11 file.
+        """
         adf11_data = Adf11(name).read()
         nuclear_charge = adf11_data['charge']
         element = adf11_data['element']
         filename = adf11_data['name']
+        #filename is probably redundant
+        assert name == filename
 
         log_temperature = adf11_data['log_temperature']
         log_density = adf11_data['log_density']
@@ -170,47 +224,40 @@ class RateCoefficient(object):
             self.splines.append(RectBivariateSpline(x, y, z))
 
     def __call__(self, k, Te, ne):
-        """
-        Evaulate the ionisation/recombination coefficients of k'th atomic state
-        at a given temperature and density.
+        """Evaulate the ionisation/recombination coefficients of
+        k'th atomic state at a given temperature and density.
 
-        Parameters
-        ----------
-        k : int
-            Ionisation stage. k=0 is the neutral atom, k=Z is  the fully
-            stripped ion, where Z is the atomic number.
-        Te : array_like
-            Temperature in [eV].
-        ne : array_like
-            Density in [m-3].
+        Args:
+            k (int): Ionising or recombined ion stage,
+                between 0 and k=Z-1, where Z is atomic number.
+            Te (array_like): Temperature in [eV].
+            ne (array_like): Density in [m-3].
 
-        Returns
-        -------
-        c : array_like
-            Rate coefficent in [m3/s].
+        Returns:
+            c (array_like): Rate coefficent in [m3/s].
         """
         c = self.log10(k, Te, ne)
         return np.power(10, c)
 
     def log10(self, k, Te, ne):
-        """
-        Evaulate the logarithm of ionisation/recombination coefficients of
+        """Evaulate the logarithm of ionisation/recombination coefficients of
         k'th atomic state at a given temperature and density.
 
-        Parameters
-        ----------
-        k : int
-            Ionisation stage. k=0 is the neutral atom, k=Z is  the fully
-            stripped ion, where Z is the atomic number.
-        Te : array_like
-            Temperature in [eV].
-        ne : array_like
-            Density in [m-3].
+        If asked to evaluate for Te = np.array([1,2,3])
+            and ne = np.array([a,b,c]),
+            it will return coeffs at (1,a), (2,b), and (3,c),
+            not a 2x2 matrix of all the grid points.
+            I'm not sure yet if __call__ is typically
+            done with 1D or 2D arrays.
 
-        Returns
-        -------
-        c : array_like
-            log10(rate coefficent in [m3/s])
+        Args:
+            k (int): Ionising or recombined ion stage.
+                Between 0 and k=Z-1, where Z is atomic number.
+            Te (array_like): Temperature in [eV].
+            ne (array_like): Density in [m-3].
+
+        Returns:
+            c (array_like): log10(rate coefficent in [m3/s])
         """
 
         Te, ne = np.broadcast_arrays(Te, ne)
@@ -222,14 +269,17 @@ class RateCoefficient(object):
 
     @property
     def temperature_grid(self):
+        """Get a np.array of temperatures in [eV]."""
         return 10**(self.log_temperature)
 
     @property
     def density_grid(self):
+        """Get an np.array of densities in [m^3]."""
         return 10**(self.log_density)
 
 from sys import float_info
 class ZeroCoefficient(RateCoefficient):
+    """A subclass of RateCoefficient"""
     def __init__(self):
         pass
 

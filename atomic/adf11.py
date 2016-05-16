@@ -35,6 +35,15 @@ parameters = {
 
 
 class Adf11(object):
+    """Represents the data in an ADF11 file.
+
+    Attributes:
+        name (string): a filename
+        class_ (string): 'acd' or 'scd', ...
+        element (string): short element name like 'c' or 'ar'
+        _raw_return_value (tuple): the output of the filereading code.
+
+    """
     def __init__(self, name):
         if not os.path.isfile(name):
             raise IOError("no such file: '%s'" % name)
@@ -87,12 +96,25 @@ class Adf11(object):
     def _sniff_class(self):
         s = Sniffer(self.name)
         if s.class_ not in adf11_classes:
-            raise NotImplementedError('unknown adf11 class: %s' % s.class_)
+            raise NotImplementedError('Unknown adf11 class: %s' % s.class_)
         self.class_ = s.class_
         self.element = s.element
 
 
 class Sniffer(object):
+    """Inspector for a filename.
+
+    Holds a split-apart adf11 filename.
+
+    Attributes:
+        file_ (str): full filename
+        name (str): file's basename 'scd96r_li.dat'
+        element (str): short element name 'li'
+        year (str): short year name '96'
+        class_ (str): file type 'scd'
+        extension (str): should always be 'dat'
+        resolved (bool): true for this example, but should always be False.
+    """
     def __init__(self, file_):
         self.file_ = file_
         self.name = os.path.basename(file_)
@@ -116,7 +138,7 @@ class Sniffer(object):
 
     def _check(self):
         assert self.extension == 'dat'
-        assert self.resolved == False, 'metastable resolved data not supported.'
+        assert self.resolved == False, 'Metastable resolved data not supported.'
 
 
 if __name__ == '__main__':
