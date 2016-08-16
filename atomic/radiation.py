@@ -1,9 +1,20 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 from atomic_data import ZeroCoefficient
 
 
 class Radiation(object):
+    """
+    Attributes:
+        y: a FractionalAbundance object.
+        atomic_data: that FrAb's atomic data.
+        temperature (np.array): that FrAb's temperature list.
+        electron_density (np.array): that FrAb's density list.
+        impurity_fraction: ???
+            n_impurity = n_e * impurity_fraction
+        neutral_fraction: fraction of neutral hydrogen, for charge exchange.
+            n_n = n_e * neutral_fraction
+    """
     def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
             neutral_fraction=0.):
         self.y = ionisation_stage_distribution
@@ -12,8 +23,8 @@ class Radiation(object):
         self.temperature = self.y.temperature
         self.electron_density = self.y.density
 
-        self.neutral_fraction = neutral_fraction
         self.impurity_fraction = impurity_fraction
+        self.neutral_fraction = neutral_fraction
 
     @property
     def power(self):
@@ -33,6 +44,16 @@ class Radiation(object):
         return self.neutral_fraction * self.electron_density
 
     def _get_power_coeffs(self):
+        """Get a dict of RateCoefficient objects.
+        Looks for RateCoefficients called
+        line_power, continuum_power, and cx_power.
+        If one is not found, it returns a ZeroCoefficient.
+
+        Returns:
+            {'continuum_power': <RateCoefficient object>,
+             'line_power'     : <RateCoefficient object>,
+             'cx_power'       : <ZeroCoefficient object>}
+        """
         power_coeffs = {}
         for key in ['line_power', 'continuum_power', 'cx_power']:
             power_coeffs[key] = self.atomic_data.coeffs.get(key,
@@ -78,13 +99,20 @@ class Radiation(object):
         return radiation_power
 
     def plot(self, **kwargs):
-        import matplotlib.pyplot as plt
+        """Plot the specific power for line_power, continuum_power,
+        cx_power, and the total.
+
+        Possible kwargs:
+            'x': the x values of temperature for the plot.
+                This will make the xscale linear.
+            'ax': something about the axes; I don't understand yet.
+        """
         if 'x' in kwargs:
             xscale = 'linear'
         else:
             xscale = 'log'
 
-        ax = kwargs.get('ax', plt.gca())
+        ax = kwargs.get('ax', plt.gca()) # gca is get current axes
         x = kwargs.get('x', self.temperature)
 
         lines = []
@@ -103,6 +131,11 @@ class Radiation(object):
         return lines
 
     def _decorate_plot(self, ax, lines):
+        """called by plot()
+        Args:
+            ax: the axes
+            lines: different ax.semilogy (plots I suppose)?
+        """
         alpha = 0.5 # transparency for fancy filling
         min_ = ax.get_ylim()[0]
         baseline = min_ * np.ones_like(self.temperature)

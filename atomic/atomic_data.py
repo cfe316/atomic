@@ -28,7 +28,8 @@ carbon_data = {
     'recombination' : 'acd96_c.dat',
     'continuum_power' : 'prb96_c.dat',
     'line_power' : 'plt96_c.dat',
-    'cx_power' : 'prc96_c.dat',
+    'cx_power' : 'prc96_c.dat', # cx_power refers to radiated power 
+                                # from cx emissions
 }
 
 
@@ -38,6 +39,11 @@ neon_data = {
     'recombination' : 'acd96_ne.dat',
     'continuum_power' : 'prb96_ne.dat',
     'line_power' : 'plt96_ne.dat',
+}
+
+# imaginary element, for testing purposes
+imaginarium_year = 0
+imaginarium_data = {
 }
 
 def _element_data(element):
@@ -246,7 +252,7 @@ class RateCoefficient(object):
         If asked to evaluate for Te = np.array([1,2,3])
             and ne = np.array([a,b,c]),
             it will return coeffs at (1,a), (2,b), and (3,c),
-            not a 2x2 matrix of all the grid points.
+            not a 3x3 matrix of all the grid points.
             I'm not sure yet if __call__ is typically
             done with 1D or 2D arrays.
 
