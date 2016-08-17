@@ -2,7 +2,8 @@
 import atomic.adas as adas
 
 atomic_data = './adas_data'
-elements_years = [('lithium', 96), ('carbon', 96), ('argon', 89), ('neon', 96)]
+elements_years = [('lithium', 96), ('carbon', 96),
+                  ('argon', 89),   ('neon', 96), ('nitrogen', 96)]
 
 db = adas.OpenAdas()
 

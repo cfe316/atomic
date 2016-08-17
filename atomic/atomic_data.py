@@ -12,6 +12,7 @@ lithium_data = {
     'continuum_power' : 'prb96_li.dat',
     'line_power' : 'plt96_li.dat',
 }
+#it might be nice to get a prc data! doesn't seem to be available
 
 argon_year = 89
 argon_data = {
@@ -28,10 +29,17 @@ carbon_data = {
     'recombination' : 'acd96_c.dat',
     'continuum_power' : 'prb96_c.dat',
     'line_power' : 'plt96_c.dat',
-    'cx_power' : 'prc96_c.dat', # cx_power refers to radiated power 
+    'cx_power' : 'prc96_c.dat', # cx_power refers to radiated power
                                 # from cx emissions
 }
 
+nitrogen_year = 96
+nitrogen_data = {
+    'ionisation' : 'scd96_n.dat',
+    'recombination' : 'acd96_n.dat',
+    'continuum_power' : 'prb96_n.dat',
+    'line_power' : 'plt96_n.dat',
+}
 
 neon_year = 96
 neon_data = {
@@ -70,6 +78,8 @@ def _element_data(element):
         return argon_data
     elif e in ['ne', 'neon']:
         return neon_data
+    elif e in ['n', 'nitrogen']:
+        return nitrogen_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
@@ -203,7 +213,7 @@ class RateCoefficient(object):
         nuclear_charge = adf11_data['charge']
         element = adf11_data['element']
         filename = adf11_data['name']
-        #filename is probably redundant
+        #filename is probably redundant:
         assert name == filename
 
         log_temperature = adf11_data['log_temperature']
@@ -223,6 +233,9 @@ class RateCoefficient(object):
 
     def _compute_interpolating_splines(self):
         self.splines = []
+        # if we want to implement metastables there are more sets of coefficients
+        # than just for nuclear charge. This should be TODO'd.
+        # Also for stuff like ecd: ionisation potentials there is nuclear_charge + 1
         for k in xrange(self.nuclear_charge):
             x = self.log_temperature
             y = self.log_density
