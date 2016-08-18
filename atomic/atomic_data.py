@@ -5,54 +5,59 @@ from scipy.interpolate import RectBivariateSpline
 
 from adf11 import Adf11
 
-lithium_year = 96
-lithium_data = {
-    'ionisation' : 'scd96_li.dat',
-    'recombination' : 'acd96_li.dat',
-    'continuum_power' : 'prb96_li.dat',
-    'line_power' : 'plt96_li.dat',
+datatype_abbrevs = {
+        'ionisation' : 'scd',
+        'recombination' : 'acd',
+        'continuum_power' : 'prb',
+        'line_power' : 'plt',
+        'cx_power' : 'prc',
 }
+
+# The system of registering element names, symbols, years,
+# and what datatypes they have could certainly be improved. However it works at the moment.
+
+lithium_year = 96
+lithium_symbol = 'li'
 #it might be nice to get a prc data! doesn't seem to be available
 
 argon_year = 89
-argon_data = {
-    'ionisation' : 'scd89_ar.dat',
-    'recombination' : 'acd89_ar.dat',
-    'continuum_power' : 'prb89_ar.dat',
-    'line_power' : 'plt89_ar.dat',
-    'cx_power' : 'prc89_ar.dat',
-}
+argon_symbol = 'ar'
+argon_has_cx_power = True
 
 carbon_year = 96
-carbon_data = {
-    'ionisation' : 'scd96_c.dat',
-    'recombination' : 'acd96_c.dat',
-    'continuum_power' : 'prb96_c.dat',
-    'line_power' : 'plt96_c.dat',
-    'cx_power' : 'prc96_c.dat', # cx_power refers to radiated power
-                                # from cx emissions
-}
+carbon_symbol = 'c'
+carbon_has_cx_power = True
 
 nitrogen_year = 96
-nitrogen_data = {
-    'ionisation' : 'scd96_n.dat',
-    'recombination' : 'acd96_n.dat',
-    'continuum_power' : 'prb96_n.dat',
-    'line_power' : 'plt96_n.dat',
-}
+nitrogen_symbol = 'n'
 
 neon_year = 96
-neon_data = {
-    'ionisation' : 'scd96_ne.dat',
-    'recombination' : 'acd96_ne.dat',
-    'continuum_power' : 'prb96_ne.dat',
-    'line_power' : 'plt96_ne.dat',
-}
+neon_symbol = 'ne'
 
 # imaginary element, for testing purposes
 imaginarium_year = 0
-imaginarium_data = {
-}
+imaginarium_data = {}
+
+def _make_filename(el_symbol, el_year, datatype):
+    """_make_filename('ne', 96, 'scd') -> 'scd96_ne.dat' """
+    return datatype + str(el_year) + '_' + el_symbol + '.dat'
+
+def _element_data_dict(el_symbol, el_year, has_cx_power=False):
+    """Give a dictionary of ADF11 file names for the given element and year
+       and whether or not it has cx_power
+    """
+    data_dict = {}
+    for key, value in datatype_abbrevs.iteritems():
+        data_dict[key] = _make_filename(el_symbol, el_year, value)
+    if not has_cx_power:
+        data_dict.pop('cx_power', None)
+    return data_dict
+
+lithium_data  = _element_data_dict(lithium_symbol,  lithium_year)
+argon_data    = _element_data_dict(argon_symbol,    argon_year,  argon_has_cx_power)
+carbon_data   = _element_data_dict(carbon_symbol,   carbon_year, carbon_has_cx_power)
+nitrogen_data = _element_data_dict(nitrogen_symbol, nitrogen_year)
+neon_data     = _element_data_dict(neon_symbol,     neon_year)
 
 def _element_data(element):
     """Give a dictionary of ADF11 file names available for the given element.

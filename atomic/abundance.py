@@ -2,7 +2,7 @@ import numpy as np
 
 
 class FractionalAbundance(object):
-    """An array of ionisation stage fractions over density and temperature.
+    """An array of ionisation stage fractions over density and/or temperature.
 
     Attributes:
         atomic_data (AtomicData): used by Radiation class
@@ -10,7 +10,7 @@ class FractionalAbundance(object):
         y (np.array, 2D): stores the fractional abundance of each
             ionisation stage, k=0 to Z, for each point
             of the given temperatures and densities.
-            Shape is (4,x)
+            Shape is (Z+1,x)
         temperature (array_like): list of temperatures [eV]
         density (array_like): list of densities [m^-3]
     """
@@ -65,6 +65,12 @@ class FractionalAbundance(object):
         return zeff
 
     def plot_vs_temperature(self, **kwargs):
+        """Use Matplotlib to plot the abundance of each stage at each point.
+
+        If the points all have the same temperature but different density,
+        this won't work.
+        """
+
         import matplotlib.pyplot as plt
         ax = kwargs.pop('ax', plt.gca())
 
