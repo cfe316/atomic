@@ -1,9 +1,25 @@
 import numpy as np
-from scipy.integrate import odeint
+import scipy.integrate
 
 from abundance import FractionalAbundance
+from coronal import CoronalEquilibrium
 
 class RateEquations(object):
+    """
+    Attributes:
+        atomic_data: an AtomicData object that these equations correspond to.
+        nuclear_charge: AtomicData's charge.
+
+        -the rest of these attributes are not set until after initializion-
+        temperature:
+        density:
+        y:
+        y_shape:
+        dydt:
+
+        S:
+        alpha:
+    """
     def __init__(self, atomic_data):
         self.atomic_data = atomic_data
         self.nuclear_charge = atomic_data.nuclear_charge
@@ -13,6 +29,9 @@ class RateEquations(object):
         self.density = density
 
     def _set_initial_conditions(self):
+        """Note here that temperature must be at least as long as density:
+        having density be an np.array([1e19,1e20,1e21]) while Te = np.array([10])
+        is not permissible."""
         self.y_shape = (self.nuclear_charge + 1, len(self.temperature))
         self._init_y()
         self._init_coeffs()
@@ -20,7 +39,7 @@ class RateEquations(object):
     def _init_y(self):
         y = np.zeros(self.y_shape)
         y[0] = np.ones_like(self.temperature)
-        self.y = y.ravel()
+        self.y = y.ravel() #functions like MMA's Flatten[] here
         self.dydt = np.zeros(self.y_shape)
 
     def _init_coeffs(self):
@@ -37,32 +56,6 @@ class RateEquations(object):
         self.alpha = alpha
 
     def derivs(self, y_, t0):
-        """right hand side of the rate equations"""
-
-        dydt = self.dydt
-        S = self.S
-        alpha = self.alpha
-        ne = self.density
-
-        y = y_.reshape(self.y_shape)
-
-        for k in xrange(self.nuclear_charge + 1): #FIXME: number of charge states
-            if k == 0:
-                gain = y[k+1]*alpha[k]
-                loss = y[k] * S[k]
-            elif k == self.nuclear_charge:
-                gain = y[k-1]*S[k-1]
-                loss = y[k] * alpha[k-1]
-            else:
-                # eq 2 with alpha[k+1] => alpha[k] substitiution
-                gain = y[k-1]*S[k-1] + y[k+1]*alpha[k]
-                loss = y[k] * (S[k] + alpha[k-1])
-
-            dydt[k] = ne * (gain - loss)
-
-        return dydt.ravel()
-
-    def derivs_optimized(self, y_, t0):
         """
         Optimised version of derivs using array slicing.  It should give the
         same as derivs().
@@ -91,65 +84,22 @@ class RateEquations(object):
 
         return dydt.ravel()
 
-    def derivs_optimized_2(self, y_, t0):
-        """
-        Optimised version of derivs using the roll function.  Probably
-        consumes more memory than derivs_optimized().  However it is kept
-        here for eduactional purposes.
-
-        A demonstration that np.roll() copies data in memory:
-        >>> a = arange(10)
-        >>> b = np.roll(a, 1)
-        >>> b.base is a
-        False
-        >>> np.may_share_memory(a, b)
-        False
-        """
-
-        dydt = self.dydt
-        S = self.S
-        alpha_to = self.alpha
-        ne = self.density
-
-        y = y_.reshape(self.y_shape)
-
-        y_lower = np.roll(y, +1, axis=0)
-        y_upper = np.roll(y, -1, axis=0)
-        S_lower = np.roll(S, +1, axis=0)
-        alpha_to_lower = np.roll(alpha_to, +1, axis=0)
-
-        dydt  = y_lower * S_lower
-        dydt += y_upper * alpha_to
-        dydt -= y * S
-        dydt -= y * alpha_to_lower
-
-        current, upper = 0, 1 # neutral and single ionised state
-        dydt[current] = y[upper] * alpha_to[current] - y[current] * S[current]
-
-        current, lower = -1, -2 # fully stripped and 1 electron state
-        dydt[current] = y[lower] * S[lower] - y[current] * alpha_to[lower]
-        dydt *= ne
-
-        return dydt.ravel()
-
-
     def solve(self, time, temperature, density):
         """
         Integrate the rate equations.
 
-        Parameters
-        ----------
-        time : array
-            A sequence of time points for which to solve.
-        temperature : array
-            Electron temperature grid to solve on [eV].
-        density : array
-            Electron density grid to solve on [m-3].
+        Args:
+            time (np.array): A sequence of time points for which to solve.
+            temperature (np.array): Electron temperature grid to solve on [eV].
+            density (np.array): Electron density grid to solve on [m^-3].
+
+        Returns:
+            a RateEquationSolution
         """
 
         self._set_temperature_and_density_grid(temperature, density)
         self._set_initial_conditions()
-        solution  = odeint(self.derivs_optimized, self.y, time)
+        solution  = scipy.integrate.odeint(self.derivs, self.y, time)
 
         abundances = []
         for s in solution.reshape(time.shape + self.y_shape):
@@ -160,8 +110,8 @@ class RateEquations(object):
 
 
 class RateEquationsWithDiffusion(RateEquations):
-    def derivs_optimized(self, y, t):
-        dydt = super(self.__class__, self).derivs_optimized(y, t)
+    def derivs(self, y, t):
+        dydt = super(self.__class__, self).derivs(y, t)
 
         ne = self.density
         tau = self.diffusion_time
@@ -193,13 +143,13 @@ class RateEquationsSolution(object):
         Compute the corresponding ionisation stage distribution in coronal
         equilibrum.
         """
-        from coronal import CoronalEquilibrium
         eq = CoronalEquilibrium(self.atomic_data)
         y_coronal = eq.ionisation_stage_distribution(self.temperature,
                 self.density)
 
         self.y_coronal = y_coronal
 
+    # I guess this is halfway to beng an Immutable Container?
     def __getitem__(self, key):
         if not isinstance(key, int):
             raise TypeError('key must be integer.')
@@ -226,11 +176,10 @@ class RateEquationsSolution(object):
         return tau_ss
 
     def ensemble_average(self):
-        from scipy.integrate import cumtrapz
 
         tau = self.times[:, np.newaxis, np.newaxis]
         y = [y.y for y in self.abundances]
-        y_bar = cumtrapz(y, tau, axis=0)
+        y_bar = scipy.integrate.cumtrapz(y, tau, axis=0)
         y_bar /= tau[1:]
 
         return self._new_from(tau.squeeze(), y_bar)
@@ -242,6 +191,8 @@ class RateEquationsSolution(object):
 
         return self.__class__(times, f)
 
+    # is this implementing the iterator protocol?
+    # https://www.ibm.com/developerworks/library/l-pycon/ ??
     def __iter__(self):
         for y in self.abundances:
             yield y
