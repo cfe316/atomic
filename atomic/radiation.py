@@ -12,7 +12,7 @@ class Radiation(object):
         electron_density (np.array): that FrAb's density list.
         impurity_fraction: ???
             n_impurity = n_e * impurity_fraction
-        neutral_fraction: fraction of neutral hydrogen, for charge exchange.
+        neutral_fraction: fraction of neutral hydrogen, for cx_power.
             n_n = n_e * neutral_fraction
     """
     def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
@@ -32,6 +32,7 @@ class Radiation(object):
 
     @property
     def specific_power(self):
+        """Power per electron per impurity nucleus, [W m^3]"""
         power = self.power
         for key in power.keys():
             power[key] /= self.electron_density * self.get_impurity_density()
