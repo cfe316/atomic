@@ -17,10 +17,11 @@ adas_data_hierarchy/
 
 *.vim
 *.swp
-*.pyc
 .sconsign.dblite
 
 *graph.ps
 
 *profile.prof
 *.pythoscope
+*.py[co]
+__pycache__/
