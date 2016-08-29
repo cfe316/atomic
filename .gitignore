@@ -25,3 +25,5 @@ adas_data_hierarchy/
 *.pythoscope
 *.py[co]
 __pycache__/
+
+examples/*.png
