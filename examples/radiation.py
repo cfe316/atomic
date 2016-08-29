@@ -35,7 +35,7 @@ customize = True
 if customize:
     plt.ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
     plt.ylim(ymin=1e-35)
-
+    
     # annotation
     s = '$n_0/n_\mathrm{e}$\n'
     if rad.neutral_fraction == 0:
@@ -46,7 +46,7 @@ if customize:
         n0 = rad.get_neutral_density()
         exponent = np.log10(n0/ne)
         s += '$10^{%d}$' % exponent
-
+    
     xy = (rad.temperature[-1], rad.specific_power['total'][-1])
     plt.annotate(s, xy, xytext=(1.05, 0.1),
         horizontalalignment='center',

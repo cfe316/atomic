@@ -2,22 +2,32 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import atomic
-    
+
 ad = atomic.element('carbon')
 
 temperature = np.logspace(0, 3, 50)
 density = 1e19
 tau = 1e19 / density
 
-t_normalized = np.logspace(-7, 0, 50)
+t_normalized = np.logspace(-7, 0, 120)
 t_normalized -= t_normalized[0]
 times = t_normalized * tau
 
 rt = atomic.RateEquations(ad)
 yy = rt.solve(times, temperature, density)
+# yy is a RateEquationsSolution object.
+# len(yy.abundances) = 60
+# yy.abundances is a list of FractionalAbundance objects.
+# yy.abundances[0].temperature is the same as the temperature above.
+# yy.abundances[0].y is a numpy array with shape (7,50)
+# yy.abundances[0].y[0] is all 1's and .y[1...6] are all 0.
+# so yy is a list of FractionalAbundance objects,
+# and each one corresponds to a time point (for ALL the temperatures)?
+# so like, we're essentially running 50 different integrations at once,
+# each for a different temperature?
 
 # time evolution of ionisation states at a certain temperature
-y_fixed_temperature = yy.at_temperature(38)
+y_fixed_temperature = yy.at_temperature(10) # has shape (nTimes, nuclear_charge+1) = (120,7)
 
 # steady state time
 tau_ss = yy.steady_state_time()
