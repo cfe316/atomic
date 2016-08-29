@@ -1,27 +1,35 @@
 import unittest
+import numpy as np
+import atomic
 
 class TestRateEquations(unittest.TestCase):
-    @unittest.skip("")
-    def test___init__(self):
-        # rate_equations = RateEquations(atomic_data)
-        assert False # TODO: implement your test here
+    def setUp(self):
+        self.ad = atomic.element('lithium')
+        self.temperature = np.logspace(0, 3, 50)
+        self.density = 1e19
+        self.times = np.logspace(-7, 0, 120)
+        self.times -= self.times[0]
+        self.rt = atomic.RateEquations(self.ad)
+
+    def test_S(self):
+        """Tests that that RateEquations are using the right ionisation coefficients."""
+        self.rt._set_temperature_and_density_grid(self.temperature, self.density)
+        self.rt._set_initial_conditions()
+        S = self.rt.S
+        for k in range(self.ad.nuclear_charge):
+            expected = S[k,0]
+            result = self.ad.coeffs['ionisation'](k,self.temperature[0],self.density)
+            self.assertAlmostEqual(expected, result, 3)
+        # test that highest part of S is zero. S[-1] and alpha[-1] are zeros and are
+        # never accessed.
+        expected = np.zeros(self.rt.y_shape[1])
+        result = S[-1]
+        np.testing.assert_equal(expected, result)
 
     @unittest.skip("")
     def test_derivs(self):
         # rate_equations = RateEquations(atomic_data)
         # self.assertEqual(expected, rate_equations.derivs(y_, t0))
-        assert False # TODO: implement your test here
-
-    @unittest.skip("")
-    def test_derivs_optimized(self):
-        # rate_equations = RateEquations(atomic_data)
-        # self.assertEqual(expected, rate_equations.derivs_optimized(y_, t0))
-        assert False # TODO: implement your test here
-
-    @unittest.skip("")
-    def test_derivs_optimized_2(self):
-        # rate_equations = RateEquations(atomic_data)
-        # self.assertEqual(expected, rate_equations.derivs_optimized_2(y_, t0))
         assert False # TODO: implement your test here
 
     @unittest.skip("")
@@ -31,17 +39,19 @@ class TestRateEquations(unittest.TestCase):
         assert False # TODO: implement your test here
 
 class TestRateEquationsWithDiffusion(unittest.TestCase):
-    @unittest.skip("")
-    def test_derivs_optimized(self):
-        # rate_equations_with_diffusion = RateEquationsWithDiffusion()
-        # self.assertEqual(expected, rate_equations_with_diffusion.derivs_optimized(y, t))
-        assert False # TODO: implement your test here
-
-    @unittest.skip("")
-    def test_solve(self):
-        # rate_equations_with_diffusion = RateEquationsWithDiffusion()
-        # self.assertEqual(expected, rate_equations_with_diffusion.solve(time, temperature, density, diffusion_time))
-        assert False # TODO: implement your test here
+    def test_diffusion(self):
+        """Tests that the total number of particles stays constant at 1.0."""
+        ad = atomic.element('carbon')
+        temperature = np.logspace(0, 3, 100)
+        density = 1e19
+        tau = 1e-3
+        times = np.logspace(-7, 0, 120)
+        times -= times[0]
+        rt = atomic.RateEquationsWithDiffusion(ad)
+        yy = rt.solve(times, temperature, density, tau)
+        expected = np.ones(len(times))
+        result = [np.sum(yy.abundances[i].y)/len(temperature) for i in xrange(len(times))]
+        np.testing.assert_array_almost_equal(expected, result)
 
 class TestRateEquationsSolution(unittest.TestCase):
     @unittest.skip("")
