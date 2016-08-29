@@ -4,6 +4,9 @@
 # If you change the tp.filter_energy the graphs will become much more filled-in.
 # I'm not sure what the ensemble-average means.
 
+# This example should be run from the examples directory, 
+# or else the data won't load.
+
 import numpy as np
 import matplotlib.pyplot as plt
 import atomic
