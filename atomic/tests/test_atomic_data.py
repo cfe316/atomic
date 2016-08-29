@@ -24,7 +24,7 @@ class TestAtomicData(unittest.TestCase):
 
     def test_element_data_not_implemented_error(self):
         with self.assertRaises(NotImplementedError):
-            atomic.atomic_data._element_data('imaginarium')
+            atomic.atomic_data._element_data('adamantium')
 
     def test_from_element(self):
         """Requires data from ./fetch_adas_data to be in the correct spot."""
