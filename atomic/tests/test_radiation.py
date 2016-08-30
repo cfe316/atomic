@@ -6,8 +6,8 @@ class TestRadiation(unittest.TestCase):
     def setUp(self):
         ad1 = atomic.element('carbon')
         ad2 = atomic.element('li')
-        eq1 = atomic.CoronalEquilibrium(ad1)
-        eq2 = atomic.CoronalEquilibrium(ad2)
+        eq1 = atomic.CollRadEquilibrium(ad1)
+        eq2 = atomic.CollRadEquilibrium(ad2)
 
         te = np.logspace(0, 3, 50)
         ne = 1e19

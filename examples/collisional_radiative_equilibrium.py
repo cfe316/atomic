@@ -15,13 +15,13 @@ temperature_ranges = {
 
 for element in elements:
     ad = atomic.element(element)
-    coronal = atomic.CoronalEquilibrium(ad)
+    collrad = atomic.CollRadEquilibrium(ad)
 
     temperature = temperature_ranges.get(element, np.logspace(0, 3, 300))
-    y = coronal.ionisation_stage_distribution(temperature, density=1e19)
+    y = collrad.ionisation_stage_distribution(temperature, density=1e19)
 
     plt.figure();
     y.plot_vs_temperature()
-    #plt.savefig('coronal_equilibrium_%s.pdf' % element)
+    #plt.savefig('collrad_equilibrium_%s.pdf' % element)
 
 plt.show()

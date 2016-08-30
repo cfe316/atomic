@@ -5,7 +5,7 @@ import numpy as np
 class TestElectronCooling(unittest.TestCase):
     def setUp(self):
         ad = atomic.element('li')
-        eq = atomic.CoronalEquilibrium(ad)
+        eq = atomic.CollRadEquilibrium(ad)
 
         self.temperature = np.logspace(0, 3, 50)
         self.electron_density = 1e19

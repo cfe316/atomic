@@ -96,7 +96,7 @@ def time_dependent_z(solution, times, ensemble_average=False):
     ax.set_ylim(0.4, y.atomic_data.nuclear_charge + 4)
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
-    z_mean = solution.y_coronal.mean_charge()
+    z_mean = solution.y_collrad.mean_charge()
     ax.loglog(solution.temperature, z_mean, color='black')
 
     ax.set_title(title)
@@ -120,8 +120,8 @@ def time_dependent_power(solution, times, ensemble_average=False):
     ax.set_ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
-    power_coronal = atomic.Radiation(solution.y_coronal).specific_power['total']
-    ax.loglog(solution.temperature, power_coronal, color='black')
+    power_collrad = atomic.Radiation(solution.y_collrad).specific_power['total']
+    ax.loglog(solution.temperature, power_collrad, color='black')
 
     ax.set_title(title)
 

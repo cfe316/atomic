@@ -3,9 +3,7 @@ import numpy as np
 from abundance import FractionalAbundance
 
 
-# Is Coronal Equilibrium the right word for density-dependent stuff?
-# I think this should be collisional-radiative equilibrium.
-class CoronalEquilibrium(object):
+class CollRadEquilibrium(object):
     def __init__(self, atomic_data):
         self.atomic_data = atomic_data
         self.ionisation_coeff = atomic_data.coeffs['ionisation'] # RateCoefficient objects
@@ -13,7 +11,7 @@ class CoronalEquilibrium(object):
         self.nuclear_charge = atomic_data.nuclear_charge #could be generalized to include metastables?
 
     def ionisation_stage_distribution(self, temperature, density):
-        """Compute ionisation stage fractions for coronal equilibrium.
+        """Compute ionisation stage fractions for collrad equilibrium.
 
         This case only includes ionisation and recombination.
         It does not include charge exchange, or any time-dependent effects.

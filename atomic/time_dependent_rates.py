@@ -2,7 +2,7 @@ import numpy as np
 import scipy.integrate
 
 from abundance import FractionalAbundance
-from coronal import CoronalEquilibrium
+from collisional_radiative import CollRadEquilibrium
 
 class RateEquations(object):
     """
@@ -145,7 +145,7 @@ class RateEquationsSolution(object):
         self.abundances = abundances
 
         self._find_parameters()
-        self._compute_y_in_coronal()
+        self._compute_y_in_collrad()
 
     def _find_parameters(self):
         y = self.abundances[0]
@@ -153,16 +153,16 @@ class RateEquationsSolution(object):
         self.temperature = y.temperature
         self.density = y.density
 
-    def _compute_y_in_coronal(self):
+    def _compute_y_in_collrad(self):
         """
-        Compute the corresponding ionisation stage distribution in coronal
+        Compute the corresponding ionisation stage distribution in collrad
         equilibrum.
         """
-        eq = CoronalEquilibrium(self.atomic_data)
-        y_coronal = eq.ionisation_stage_distribution(self.temperature,
+        eq = CollRadEquilibrium(self.atomic_data)
+        y_collrad = eq.ionisation_stage_distribution(self.temperature,
                 self.density)
 
-        self.y_coronal = y_coronal
+        self.y_collrad = y_collrad
 
     # I guess this is halfway to beng an Immutable Container?
     def __getitem__(self, key):
@@ -192,7 +192,7 @@ class RateEquationsSolution(object):
         E.g. if it took a 1 eV plasma 1.0s and a 10 eV plasma 0.2s,
         np.array([1.0, 0.2])
         """
-        z_mean_ref = self.y_coronal.mean_charge()
+        z_mean_ref = self.y_collrad.mean_charge()
 
         tau_ss = np.zeros_like(self.temperature)
         for t, f in reversed(zip(self.times, self.abundances)):

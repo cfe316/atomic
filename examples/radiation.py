@@ -16,7 +16,7 @@ import atomic
 
 
 ad = atomic.element('carbon')
-eq = atomic.CoronalEquilibrium(ad)
+eq = atomic.CollRadEquilibrium(ad)
 
 temperature = np.logspace(0, 3, 50)
 electron_density = 1e19

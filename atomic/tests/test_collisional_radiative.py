@@ -2,11 +2,11 @@ import unittest
 import numpy as np
 import atomic
 
-class TestCoronalEquilibrium(unittest.TestCase):
+class TestCollRadEquilibrium(unittest.TestCase):
     def setUp(self):
         """This is more of an Integration Test than a unit test."""
         self.ad = atomic.element('Li')
-        self.eq = atomic.CoronalEquilibrium(self.ad)
+        self.eq = atomic.CollRadEquilibrium(self.ad)
 
     def test___init__(self):
         assert self.eq
