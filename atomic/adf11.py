@@ -7,6 +7,8 @@ detailed description of the possible subclasses.
 [2] http://www.adas.ac.uk/man/chap4-04.pdf
 """
 import os
+import numpy as np
+
 import _xxdata_11
 
 
@@ -18,6 +20,7 @@ adf11_classes = {
     'prb' : 4, # continuum radiation power
     'plt' : 8, # line radiation power
     'prc' : 5, # charge-exchange recombination radiation
+    'ecd' : 12 # effective ionisation potential
 }
 
 
@@ -90,7 +93,13 @@ class Adf11(object):
 
         # convert everything to SI + eV units
         d['log_density'] += 6 # log(cm^-3) = log(10^6 m^-3) = 6 + log(m^-3)
-        d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
+        # the ecd (ionisation potential) class is already in eV units.
+        # admittedly this a cluge to store these non-rate-coefficient
+        # objects inside a RateCoefficient but it'll save a bunchton of code.
+        if self.class_ != 'ecd':
+            d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
+        else:
+            d['log_coeff'] = np.log10(d['log_coeff'][1:])
         return d
 
     def _sniff_class(self):

@@ -11,6 +11,7 @@ datatype_abbrevs = {
         'continuum_power' : 'prb',
         'line_power' : 'plt',
         'cx_power' : 'prc',
+        'ionisation_potential' : 'ecd',
 }
 
 # The system of registering element names, symbols, years,
@@ -108,6 +109,7 @@ class AtomicData(object):
         nuclear_charge (int) : the element's Z
 
     """
+
     def __init__(self, coefficients):
         """
         Args:
@@ -177,7 +179,6 @@ class AtomicData(object):
         e = self.element
         self.element = e[0].upper() + e[1:]
 
-
 class RateCoefficient(object):
     """Interpolation tables for the rate of some physical process.
 
@@ -194,6 +195,10 @@ class RateCoefficient(object):
         splines: list of scipy.interpolate.fitpack2.RectBivariateSpline
             The list has length Z and is interpolations of log_coeff.
 
+    NOTE: With the addition of ionisation_potentials, the RateCoefficient 
+    object is also storing tables of the ionisation potentials, even though
+    it is not at all the same thing as a rate coefficient. This is a kludge
+    for now.
     """
     def __init__(self, nuclear_charge, element, log_temperature, log_density,
             log_coeff, name=None):
