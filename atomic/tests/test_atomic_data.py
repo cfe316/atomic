@@ -15,6 +15,7 @@ class TestAtomicData(unittest.TestCase):
         expected = {'recombination': 'acd96_li.dat',
                     'line_power': 'plt96_li.dat',
                     'ionisation': 'scd96_li.dat',
+                    'ionisation_potential': 'ecd96_li.dat',
                     'continuum_power': 'prb96_li.dat'}
         self.assertEqual(data1, expected)
 
