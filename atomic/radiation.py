@@ -83,7 +83,10 @@ class Radiation(object):
                         self.electron_density)
 
                 if key in ['continuum_power', 'line_power']:
-                    scale = ne * ni * y.y[k]
+                    if key in ['continuum_power']:
+                        scale = ne * ni * y.y[k + 1]
+                    else:
+                        scale = ne * ni * y.y[k]
                 elif key in ['cx_power']:
                     scale = n0 * ni * y.y[k]
 
