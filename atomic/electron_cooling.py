@@ -56,6 +56,13 @@ class ElectronCooling(object):
             power[key] /= self.electron_density * self.get_impurity_density()
         return power
 
+    def epsilon(self, tau):
+        """Electron cooling energy per ion [eV], given the lifetime tau."""
+        eps = {}
+        for k in 'rad_total', 'total':
+            eps[k] = self.specific_power[k] * self.electron_density * tau / self.eV
+        return eps
+
     def get_impurity_density(self):
         return self.impurity_fraction * self.electron_density
 

@@ -151,6 +151,7 @@ class Radiation(object):
         lines[-1].set_color('black')
 
     def _get_label(self, key):
+        """Called by plot"""
         labels = {
             'continuum_power' : 'continuum',
             'line_power' : 'line',
