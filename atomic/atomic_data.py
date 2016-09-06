@@ -35,6 +35,13 @@ nitrogen_symbol = 'n'
 neon_year = 96
 neon_symbol = 'ne'
 
+beryllium_year = 96
+beryllium_symbol = 'be'
+
+boron_year = 89
+boron_symbol = 'b'
+boron_has_cx_power = True
+
 # imaginary element, for testing purposes
 imaginarium_year = 0
 imaginarium_data = {}
@@ -59,6 +66,8 @@ argon_data    = _element_data_dict(argon_symbol,    argon_year,  argon_has_cx_po
 carbon_data   = _element_data_dict(carbon_symbol,   carbon_year, carbon_has_cx_power)
 nitrogen_data = _element_data_dict(nitrogen_symbol, nitrogen_year)
 neon_data     = _element_data_dict(neon_symbol,     neon_year)
+beryllium_data= _element_data_dict(beryllium_symbol,beryllium_year)
+boron_data    = _element_data_dict(boron_symbol,    boron_year)
 
 def _element_data(element):
     """Give a dictionary of ADF11 file names available for the given element.
@@ -86,6 +95,10 @@ def _element_data(element):
         return neon_data
     elif e in ['n', 'nitrogen']:
         return nitrogen_data
+    elif e in ['be', 'beryllium']:
+        return beryllium_data
+    elif e in ['b', 'boron']:
+        return boron_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
