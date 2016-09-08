@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 from collections import OrderedDict
 
-te = np.logspace(0,3,500)
 ne=1e20
 
 elm_colors=[]
@@ -20,6 +19,7 @@ elementColors = OrderedDict([
 ])
 
 def plotPostIntegral(ad, color):
+    te = atomic.post_integral.temperatureRange(ad)
     y1 = atomic.post_integral.rhs(ad, te, ne)
     line, = plt.loglog(te, y1, c=color, label=ad.element)
 
@@ -29,7 +29,7 @@ for el, c in elementColors.items():
     plotPostIntegral(atomic.element(el), c)
 
 plt.legend(loc='best')
-plt.ylim(ymin=1e-4)
+plt.ylim(ymin=3e-3)
 plt.grid(True)
 plt.title("Regenerating Post 1995's Figure 10 with Li added")
 plt.xlabel(r'$T_e$ [eV]')
@@ -42,8 +42,8 @@ plt.show()
 def table_compare(toptemp):
     print "\n==At " + str(toptemp) + "eV=="
     ne = 1e20
-    te = np.logspace(0,np.log10(toptemp),200)
     for el in ('Li', 'Be', 'C', 'Ne', 'Ar'):
+        te = atomic.post_integral.temperatureRange(atomic.element(el), top=toptemp)
         val = atomic.post_integral.rhs(atomic.element(el), te, np.array([ne]))[-1]
         print(el + ' %.3f' % val)
 

@@ -12,6 +12,15 @@ import numpy as np
 import atomic
 import scipy.integrate
 
+def temperatureRange(ad, top=1e3):
+    """Get the temperature range to integrate for an element.
+    
+    We expect recombination at around half the
+    first ionisation energy, so the integral should be from there upwards.
+    """
+    first_ion=ad.coeffs['ionisation_potential'](0,10,1e19)
+    return np.logspace(np.log10(first_ion/2.0), np.log10(top),200)
+
 def post_integral(ad, temperature, electron_density):
     """\int_0^{Tes} Lz(Te) Te^{1/2} \;dTe    
     

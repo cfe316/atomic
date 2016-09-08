@@ -16,6 +16,7 @@ datatype_abbrevs = {
 
 # The system of registering element names, symbols, years,
 # and what datatypes they have could certainly be improved. However it works at the moment.
+# maybe with a pandas DataFrame?
 
 lithium_year = 96
 lithium_symbol = 'li'
