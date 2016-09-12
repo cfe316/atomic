@@ -4,8 +4,6 @@
 # 
 # we determine Equation 2's integral.
 # 
-# For starters, let's calculate Lz at a constant density,
-# and at tau=infinity.
 
 import numpy as np
 
@@ -19,25 +17,38 @@ def temperatureRange(ad, top=1e3):
     first ionisation energy, so the integral should be from there upwards.
     """
     first_ion=ad.coeffs['ionisation_potential'](0,10,1e19)
-    return np.logspace(np.log10(first_ion/2.0), np.log10(top),200)
+    return np.logspace(np.log10(first_ion/2.0), np.log10(top), 25)
 
-def post_integral(ad, temperature, electron_density):
+def post_integral(ad, temperature, electron_density, tau=np.inf):
     """\int_0^{Tes} Lz(Te) Te^{1/2} \;dTe    
     
     Lz is given in W m^3 so the output has units of [W m^3 eV^{1/2}]
     """
-    eq = atomic.CollRadEquilibrium(ad)
-    y = eq.ionisation_stage_distribution(temperature, electron_density)
-    Lz = atomic.Radiation(y).specific_power['total']
+    if tau == np.inf:
+        eq = atomic.CollRadEquilibrium(ad)
+        y = eq.ionisation_stage_distribution(temperature, electron_density)
+        Lz = atomic.Radiation(y).specific_power['total']
+    else:
+        rt = atomic.RateEquationsWithDiffusion(ad)
+        times = np.logspace(-7, np.log10(tau)+1, 40)
+        times -= times[0]
+        yy = rt.solve(times, temperature, electron_density, tau)
+        Lz = atomic.ElectronCooling(yy.abundances[-1]).specific_power['total']
     Lzint = scipy.integrate.cumtrapz(Lz * np.sqrt(temperature), x=temperature, initial=0)
     return Lzint
 
-def rhs(ad, temperature, electron_density):
+def rhs(ad, temperature, electron_density, tau=np.inf):
     """The rhs of Post's equation (2). 
     
     He is using Lz in units of ergs cm^3 s.
     One of those equals 10^{-13} W m^3.
-    
+
+    Arguments:
+        ad (AtomicData): data for this species
+        temperature (np.array): list of temperatures to integrate up to
+        electron_density (float): background electron density in m^{-3}.
+        tau (float): time constant for diffusion of impurities. The default,
+            infinity, uses a faster collisional-radiative equilibrium solver.
     """
-    lzint = post_integral(ad, temperature, electron_density)
+    lzint = post_integral(ad, temperature, electron_density, tau)
     return 2.5e5 * np.sqrt(temperature ** 2 * (lzint * 1e13) )
