@@ -1,9 +1,4 @@
-src/xxdata_11.tar.gz
-src/xxdata_11/test.out
-src/xxdata_11/xxdata_11-f2pywrappers.f
-src/xxdata_11/xxdata_11.pyf
-src/xxdata_11/xxdata_11.so
-src/xxdata_11/xxdata_11module.c
+src/xxdata_1*
 src/_xxdata_11module.c
 src/_xxdata_15module.c
 
