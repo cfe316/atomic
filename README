@@ -39,6 +39,15 @@ run:
 
 For description of these so called iso-nuclear master files see [2].
 
+Testing
+-------
+
+Have nose2 installed.
+
+    $ nose2
+
+Test boilerplate was first produced automatedly with pythoscope, so
+at time of writing (20160916) many tests are skipped. (S)
 
 References
 ----------
