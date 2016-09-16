@@ -27,3 +27,5 @@ adas_data_hierarchy/
 __pycache__/
 
 examples/*.png
+
+*.ipynb

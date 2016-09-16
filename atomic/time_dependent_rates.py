@@ -206,9 +206,12 @@ class RateEquationsSolution(object):
 
         tau = self.times[:, np.newaxis, np.newaxis]
         y = [y.y for y in self.abundances]
-        y_bar = scipy.integrate.cumtrapz(y, tau, axis=0)
+        # y is a list of np.arrays. len(y) is nTimes, and
+        # the contained arrays have shape (nuclear_charge + 1, nTemperatures)
+        y_bar = scipy.integrate.cumtrapz(y, x=tau, axis=0)
         y_bar /= tau[1:]
-
+        # y_bar is a 3D np.array with shape
+        # (nTimes - 1, nuclear_charge + 1, nTemperatures)
         return self._new_from(tau.squeeze(), y_bar)
 
     def select_times(self, time_instances):

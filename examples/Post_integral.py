@@ -48,6 +48,7 @@ plt.ylabel(r'$q_\parallel$ (GW/m$^2$)/[$n_e (10^{20} \mathrm{m}^{-3})\sqrt{F_z}$
 plt.show()
 
 # # Comparisons to Post's Table 3 for Be, C, Ne, and Ar
+# # ===================================================
 # We compare the output of our integral with Post's table 3. We've added Li.
 
 #def table_compare(toptemp):
