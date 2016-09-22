@@ -8,6 +8,15 @@ different elements in hot plasmas.
 Installation and running the code
 ---------------------------------
 
+Required code from OPEN-ADAS:
+Download from http://open.adas.ac.uk/codes the xxdata_11.tar.gz 
+and xxdata_15.tar.gz files, and extract their files into
+
+    src/xxdata_11/
+    src/xxdata_15/
+
+Then
+
     $ python setup.py build_ext --inplace # to compile the extension module
     $ ./fetch_adas_data # fetch the atomic data
 

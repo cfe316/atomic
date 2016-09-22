@@ -12,7 +12,6 @@ elementColors = OrderedDict([
     ('carbon', 'black'),
     ('nitrogen', 'blue'),
     ('neon', 'red'),
-#    ('argon', 'purple'),
 ])
 
 def plotEps(ad, color):
@@ -25,9 +24,6 @@ def plotEps(ad, color):
     y1 = eps['total']
     lab = ad.element
     line, = plt.loglog(temperature, y1, color, label=lab)
- #   y2 = eps['rad_total']
- #   line, = plt.loglog(temperature, y2, color)
- #   line.set_dashes([10,5])
 
 tau = 1e-3
 density = 1e20
