@@ -1,7 +1,7 @@
 # This example makes plots related to 
 # Figure 10 in D. Post's 1995 paper.
 
-# For an upstream temperature of 250eV,
+# For an upstream temperature of Tsep eV,
 # (and a target temperature of 1/2 the first ionisation energy of a species)
 # what parallel power could be radiated for a certain impurity fraction,
 # as a function of (a constant along the SOL) n_e * tau?
@@ -26,6 +26,7 @@ import itertools
 ne = np.array([1e20])
 taus = np.logspace(-6,-1,20)
 netaus = ne * taus
+Tsep = 150
 
 elementColors = OrderedDict([
     ('argon', 'pink'),
@@ -50,7 +51,7 @@ def num2sslatex(n):
     return r'$\mathregular{' + num2latex(n) + '}$'
 
 def plotPostIntegral(ad, color):
-    te = atomic.post_integral.temperatureRange(ad, top=250)
+    te = atomic.post_integral.temperatureRange(ad, top=Tsep)
     y = []
     for netau in netaus:
         y.append(atomic.post_integral.rhs(ad, te, ne, tau=netau/ne)[-1])
@@ -59,7 +60,7 @@ def plotPostIntegral(ad, color):
 plt.close('all')
     
 d = num2latex(ne)
-lab = r'$n_e = ' + d +'\,\mathrm{m}^{-3}, \; T_{e,sep} = 250 \mathrm{eV}$'
+lab = r'$n_e = ' + d +'\,\mathrm{m}^{-3}, \; T_{e,sep} = ' + str(Tsep) + r'\mathrm{eV}$'
 
 fig = plt.figure()
 ax1 = fig.add_subplot(1,1,1)

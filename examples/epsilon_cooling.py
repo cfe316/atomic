@@ -8,10 +8,10 @@ from collections import OrderedDict
 import atomic
 
 elementColors = OrderedDict([
-    ('lithium', 'green'),
     ('carbon', 'black'),
     ('nitrogen', 'blue'),
     ('neon', 'red'),
+    ('lithium', 'green'),
 ])
 
 def plotEps(ad, color):
@@ -25,7 +25,7 @@ def plotEps(ad, color):
     lab = ad.element
     line, = plt.loglog(temperature, y1, color, label=lab)
 
-tau = 1e-3
+tau = 1e-5
 density = 1e20
 times = np.logspace(-7, np.log10(tau) + 1, 120)
 
@@ -33,7 +33,7 @@ for el, c in elementColors.items():
     print el
     plotEps(atomic.element(el), c)
 
-plt.title(r'$n_e = \; '+ str(density)+ r'\; [m^{-3}]$, $ \tau = 1e'+str(int(np.log10(tau)))+'\;[s]$')
+plt.title(r'$n_e = \; '+ str(density)+ r'\; [m^{-3}]$, $ \tau = 1e'+str(int(np.log10(tau)))+'\;[s]$, dashed=rad only, solid=with ionization')
 plt.ylabel(r'$\epsilon_{cool} \; [\mathrm{eV}]$')
 plt.xlabel(r'$T_e \; [\mathrm{eV}]$')
 plt.ylim(ymin=1e-0, ymax=1e5)
