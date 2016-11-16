@@ -65,6 +65,12 @@ class TestRateCoefficient(unittest.TestCase):
         result = self.rc(0, 10, 1e19)
         self.assertAlmostEqual(expected, result, 3)
 
+    def test___call__both_backwards(self):
+        """Units are in [m^3/s]"""
+        expected = 2
+        result = self.rc(0, np.array([20, 10]), np.array([1e19,1e20]))
+        self.assertEqual(expected, len(result))
+
     @unittest.skip("")
     def test___init__(self):
         # rate_coefficient = RateCoefficient(nuclear_charge, element, log_temperature, log_density, log_coeff, name)

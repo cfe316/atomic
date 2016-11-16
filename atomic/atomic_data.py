@@ -307,8 +307,8 @@ class RateCoefficient(object):
         log_temperature = np.log10(Te)
         log_density = np.log10(ne)
 
-        c = self.splines[k](log_temperature, log_density)
-        return c.diagonal()
+        c = self.splines[k](log_temperature, log_density, grid=False)
+        return c
 
     @property
     def temperature_grid(self):
