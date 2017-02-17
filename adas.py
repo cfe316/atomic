@@ -30,13 +30,13 @@ class OpenAdas(object):
         else:
             __, path = url_filename
 
-        tmpfile, __ = urllib.request.urlretrieve(url)
-
         dst_filename = os.path.join(self.dst_directory, path)
-        self._mkdir_p(os.path.dirname(dst_filename))
+        if not os.path.exists(dst_filename):
+            tmpfile, __ = urllib.request.urlretrieve(url)
 
+            self._mkdir_p(os.path.dirname(dst_filename))
 
-        shutil.move(tmpfile, dst_filename)
+            shutil.move(tmpfile, dst_filename)
 
     def _construct_url(self, url_filename):
         """
