@@ -78,7 +78,7 @@ class Adf15(object):
 
 
         datablocks = []
-        for i in xrange(n_datablocks):
+        for i in range(n_datablocks):
             b = {}
             nd, nt = n_densities[i], n_temperatures[i]
             b['density'] = densities[:nd,i]

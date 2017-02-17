@@ -4,8 +4,8 @@ import numpy as np
 from scipy.interpolate import RectBivariateSpline
 import scipy.constants as constants
 
-from adf15 import Adf15
-from atomic_data import RateCoefficient
+from .adf15 import Adf15
+from .atomic_data import RateCoefficient
 
 
 class Transition(object):
@@ -97,18 +97,18 @@ class TransitionPool(object):
 
     def filter_type(self, *type_names):
         names = self._interpret_type(*type_names)
-        new_transitions = filter(lambda t: t.type_ in names, self.transitions)
+        new_transitions = [t for t in self.transitions if t.type_ in names]
         return self.__class__(new_transitions)
 
     def filter_energy(self, lo, hi, unit='eV'):
         lo_ = lo * constants.elementary_charge
         hi_ = hi * constants.elementary_charge
         in_roi = lambda t: (lo_ <= t.energy) and (t.energy < hi_)
-        new_transitions = filter(in_roi, self.transitions)
+        new_transitions = list(filter(in_roi, self.transitions))
         return self.__class__(new_transitions)
 
     def _interpret_type(self, *type_names):
-        return map(self._figure_out_type, type_names)
+        return list(map(self._figure_out_type, type_names))
 
     def _figure_out_type(self, type_):
         if type_ in ['excitation', 'excit', 'ex']:
@@ -201,7 +201,7 @@ class CoefficientFactory(object):
 
     def _sum_transitions(self):
         coeffs = []
-        for i in xrange(self.nuclear_charge):
+        for i in range(self.nuclear_charge):
             c = self.ionisation_stages.get(i, None)
             if c is None:
                 pec = np.zeros(self.temperature_grid.shape +

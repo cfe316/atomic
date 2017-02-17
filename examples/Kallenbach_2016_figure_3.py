@@ -19,7 +19,7 @@ elementColors = OrderedDict([
 def Lz_radiated_power(rate_equations, taus, color):
     linestyles = ['dashed', 'solid', 'dashed']
     for i, tau in enumerate(taus):
-        print tau * 1e3
+        print(tau * 1e3)
         times = np.logspace(-7, np.log10(tau*10), 20)
         y = rt.solve(times, temperature, density, tau)
         rad = atomic.Radiation(y.abundances[-1])
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     plt.ylim(ymin=1e-35, ymax=1e-30)
 
     legend_handles = []
-    for elem, col in elementColors.items():
+    for elem, col in list(elementColors.items()):
         rt = atomic.RateEquationsWithDiffusion(atomic.element(elem))
         Lz_radiated_power(rt, taus, col)
         legend_handles.append(mlines.Line2D([],[],

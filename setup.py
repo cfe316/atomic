@@ -21,7 +21,7 @@ def configuration(parent_package='', top_path=None):
     config = Configuration('atomic', parent_package, top_path)
 
 
-    for module, values in extension_modules.iteritems():
+    for module, values in extension_modules.items():
         directory = values['directory']
         sources = values['sources']
         sources = [os.path.join(directory, i) for i in sources]
