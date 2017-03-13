@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/Users/unterbee/anaconda/bin/python
 import atomic.adas as adas
 
 atomic_data = './adas_data'
-elements_years = [('carbon', 96), ('argon', 89), ('neon', 96)]
+elements_years = [('carbon', 96), ('argon', 89), ('neon', 96), ('silicon', 96), ('boron', 89),
+                  ('tungsten', 50), ('helium', 96), ('hydrogen', 96), ('nitrogen', 96)]
 
 db = adas.OpenAdas()
 
