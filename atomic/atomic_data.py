@@ -2,32 +2,63 @@ import os
 
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
+from sys import float_info
 
 from adf11 import Adf11
 
 
 argon_data = {
-    'ionisation' : 'scd89_ar.dat',
-    'recombination' : 'acd89_ar.dat',
-    'continuum_power' : 'prb89_ar.dat',
-    'line_power' : 'plt89_ar.dat',
-    'cx_power' : 'prc89_ar.dat',
+    'ionisation': 'scd89_ar.dat',
+    'recombination': 'acd89_ar.dat',
+    'continuum_power': 'prb89_ar.dat',
+    'line_power': 'plt89_ar.dat',
+    'cx_power': 'prc89_ar.dat',
+}
+
+boron_data = {
+    'ionisation': 'scd89_b.dat',
+    'recombination': 'acd89_b.dat',
+    'continuum_power': 'prb89_b.dat',
+    'line_power': 'plt89_b.dat',
+    'cx_power': 'prc89_b.dat',
 }
 
 carbon_data = {
-    'ionisation' : 'scd96_c.dat',
-    'recombination' : 'acd96_c.dat',
-    'continuum_power' : 'prb96_c.dat',
-    'line_power' : 'plt96_c.dat',
-    'cx_power' : 'prc96_c.dat',
+    'ionisation': 'scd96_c.dat',
+    'recombination': 'acd96_c.dat',
+    'continuum_power': 'prb96_c.dat',
+    'line_power': 'plt96_c.dat',
+    'cx_power': 'prc96_c.dat',
 }
 
 neon_data = {
-    'ionisation' : 'scd96_ne.dat',
-    'recombination' : 'acd96_ne.dat',
-    'continuum_power' : 'prb96_ne.dat',
-    'line_power' : 'plt96_ne.dat',
+    'ionisation': 'scd96_ne.dat',
+    'recombination': 'acd96_ne.dat',
+    'continuum_power': 'prb96_ne.dat',
+    'line_power': 'plt96_ne.dat',
 }
+
+silicon_data = {
+    'ionisation': 'scd96_si.dat',
+    'recombination': 'acd96_si.dat',
+    'continuum_power': 'prb96_si.dat',
+    'line_power': 'plt96_si.dat',
+}
+
+tungsten_data = {
+    'ionisation': 'scd50_w.dat',
+    'recombination': 'acd50_w.dat',
+    'continuum_power': 'prb50_w.dat',
+    'line_power': 'plt50_w.dat',
+}
+
+nitrogen_data = {
+    'ionisation': 'scd96_n.dat',
+    'recombination': 'acd96_n.dat',
+    'continuum_power': 'prb96_n.dat',
+    'line_power': 'plt96_n.dat',
+}
+
 
 def _element_data(element):
     e = element.lower()
@@ -37,13 +68,21 @@ def _element_data(element):
         return carbon_data
     elif e in ['ne', 'neon']:
         return neon_data
+    elif e in ['si', 'silicon']:
+        return silicon_data
+    elif e in ['b', 'boron']:
+        return boron_data
+    elif e in ['w', 'tungsten']:
+        return boron_data
+    elif e in ['n', 'nitrogen']:
+        return boron_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
 
 def _full_path(file_):
     """ Figure out the location of the atomic datafiles. """
-    module_path = os.path.dirname(os.path.realpath( __file__ ))
+    module_path = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(module_path, '..', 'adas_data', file_)
 
 
@@ -99,7 +138,7 @@ class AtomicData(object):
 
 class RateCoefficient(object):
     def __init__(self, nuclear_charge, element, log_temperature, log_density,
-            log_coeff, name=None):
+                 log_coeff, name=None):
         self.nuclear_charge = nuclear_charge
         self.element = element
         self.adf11_file = name
@@ -122,14 +161,14 @@ class RateCoefficient(object):
         log_coeff = adf11_data['log_coeff']
 
         return cls(nuclear_charge, element, log_temperature, log_density,
-                log_coeff, name=filename)
+                   log_coeff, name=filename)
 
     def copy(self):
         log_temperature = self.log_temperature.copy()
         log_density = self.log_density.copy()
         log_coeff = self.log_coeff.copy()
         cls = self.__class__(self.nuclear_charge, self.element, log_temperature,
-                log_density, log_coeff, self.adf11_file)
+                             log_density, log_coeff, self.adf11_file)
         return cls
 
     def _compute_interpolating_splines(self):
@@ -199,7 +238,7 @@ class RateCoefficient(object):
     def density_grid(self):
         return 10**(self.log_density)
 
-from sys import float_info
+
 class ZeroCoefficient(RateCoefficient):
     def __init__(self):
         pass
