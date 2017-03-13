@@ -1,18 +1,20 @@
 import numpy as np
 import atomic
+import matplotlib.pyplot as plt
 
-
-ad = atomic.element('carbon')
+Element = 'carbon'
+ad = atomic.element(Element)
 eq = atomic.CoronalEquilibrium(ad)
 
 temperature = np.logspace(0, 3, 50)
 electron_density = 1e19
 y = eq.ionisation_stage_distribution(temperature, electron_density)
 
-rad = atomic.Radiation(y, neutral_fraction=1e-2)
+rad = atomic.Radiation(y, neutral_fraction=1e-1)
 
-import matplotlib.pyplot as plt
-plt.figure(10); plt.clf()
+
+plt.figure()
+plt.clf()
 
 customize = True
 
@@ -34,12 +36,11 @@ if customize:
 
     xy = (rad.temperature[-1], rad.specific_power['total'][-1])
     plt.annotate(s, xy, xytext=(1.05, 0.1),
-        horizontalalignment='center',
-        textcoords='axes fraction')
+                 horizontalalignment='center',
+                 textcoords='axes fraction')
 
 lines[-1].set_linewidth(2)
-plt.legend(loc='best')
+plt.legend(title=Element, loc='best')
 
 plt.draw()
 plt.show()
-
