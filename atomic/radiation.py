@@ -5,7 +5,7 @@ from atomic_data import ZeroCoefficient
 
 class Radiation(object):
     def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
-            neutral_fraction=0.):
+                 neutral_fraction=0.):
         self.y = ionisation_stage_distribution
         self.atomic_data = ionisation_stage_distribution.atomic_data
 
@@ -35,8 +35,7 @@ class Radiation(object):
     def _get_power_coeffs(self):
         power_coeffs = {}
         for key in ['line_power', 'continuum_power', 'cx_power']:
-            power_coeffs[key] = self.atomic_data.coeffs.get(key,
-                    ZeroCoefficient())
+            power_coeffs[key] = self.atomic_data.coeffs.get(key, ZeroCoefficient())
         return power_coeffs
 
     def _compute_power(self):
@@ -58,7 +57,7 @@ class Radiation(object):
         for k in xrange(self.atomic_data.nuclear_charge):
             for key in radiation_power.keys():
                 coeff = power_coeffs[key](k, self.temperature,
-                        self.electron_density)
+                                          self.electron_density)
 
                 if key in ['continuum_power', 'line_power']:
                     scale = ne * ni * y.y[k]
@@ -68,8 +67,7 @@ class Radiation(object):
                 radiation_power[key][k] = scale * coeff
 
         # compute the total power
-        radiation_power['total'] = reduce(lambda x,y: x+y,
-                radiation_power.values())
+        radiation_power['total'] = reduce(lambda x, y: x+y, radiation_power.values())
 
         # sum over all ionisation stages
         for key in radiation_power.keys():
@@ -103,7 +101,7 @@ class Radiation(object):
         return lines
 
     def _decorate_plot(self, ax, lines):
-        alpha = 0.5 # transparency for fancy filling
+        alpha = 0.5  # transparency for fancy filling
         min_ = ax.get_ylim()[0]
         baseline = min_ * np.ones_like(self.temperature)
 
@@ -115,10 +113,9 @@ class Radiation(object):
 
     def _get_label(self, key):
         labels = {
-            'continuum_power' : 'continuum',
-            'line_power' : 'line',
-            'cx_power' : 'charge-exchange',
-            'total' : 'total',
-        }
+                'continuum_power': 'continuum',
+                'line_power': 'line',
+                'cx_power': 'charge-exchange',
+                'total': 'total',
+                }
         return labels.get(key, None)
-
