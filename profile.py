@@ -1,7 +1,8 @@
 """
 Profiling the ionisation rate equation solver.
 """
-import cProfile, pstats
+import cProfile
+import pstats
 
 import numpy as np
 import atomic
