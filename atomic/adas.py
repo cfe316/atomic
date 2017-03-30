@@ -3,21 +3,26 @@ import urllib
 
 open_adas = 'http://open.adas.ac.uk/'
 
+
 class OpenAdas(object):
     def search_adf11(self, element, year='', metastable='unresolved'):
-        p = [('element', element), ('year', year), ('metastable', metastable),
-                ('searching', 1)]
+        if metastable is 'unresolved':
+            p = [('element', element), ('year', year), ('metastable_unresolved', 1),
+                 ('searching', 1)]
+        else:
+            p = [('element', element), ('year', year), ('metastable_resolved', 1),
+                 ('searching', 1)]
         s = AdasSearch('adf11')
         return s.search(p)
 
     def search_adf15(self, element, charge=''):
         p = [('element', element), ('charge', charge), ('resolveby', 'file'),
-                ('searching', 1)]
+             ('searching', 1)]
         s = AdasSearch('adf15')
         return s.search(p)
 
     def fetch(self, id_filename, dst_directory=None):
-        if dst_directory == None:
+        if dst_directory is None:
             dst_directory = os.curdir
         self.dst_directory = dst_directory
 
@@ -30,19 +35,19 @@ class OpenAdas(object):
         # Write all lines in the destination file but the first.  Files, incorrectly,
         # contain an empty first line. This is a bug in the Open-ADAS database.
         dst = open(dst_filename, 'w')
-        dst.writelines(lines[1:])
-
+        dst.writelines(lines)
+        dst.close()
         os.remove(tmpfile)
 
     def _construct_url(self, id_filename):
         """
         >>> db = OpenADAS()
-        >>> db._construct_url((12345, 'foo.dat'))
+        >>> db._construct_url((directory, 'foo.dat'))
         'http://open.adas.ac.uk/download.php?id=12345'
         """
         id_, filename = id_filename
         query = [('id', id_)]
-        return open_adas + 'download.php?' + urllib.urlencode(query)
+        return open_adas + 'download/' + id_[7:]
 
 
 class AdasSearch(object):
@@ -61,7 +66,7 @@ class AdasSearch(object):
         return self._parse_data()
 
     def _retrieve_search_page(self):
-        search_url =  self.url + urllib.urlencode(self.parameters)
+        search_url = self.url + urllib.urlencode(self.parameters)
         res, msg = urllib.urlretrieve(search_url)
         self.data = open(res).read()
         os.remove(res)
@@ -71,14 +76,22 @@ class AdasSearch(object):
         parser.feed(self.data)
         lines = parser.lines
 
-        if lines == []: return {}
+        if lines == []:
+            return {}
         header = lines.pop(0)
 
         db = []
         for l in lines:
             if self.class_ == 'adf11':
-                element, class_, comment, year, resolved, url, name = l
-                id_ = self._strip_url(url)
+                element = l[0]
+                class_ = l[6]+l[7]
+                comment = l[2]
+                year = l[3]
+                resolved = l[4]
+                # url = l[6]
+                name = l[8].lstrip()
+                # id_ = self._strip_url(url)
+                id_ = l[5]
                 class_ = class_.lower()
                 db.append((id_, name))
             elif self.class_ == 'adf15':
@@ -95,8 +108,9 @@ class AdasSearch(object):
         return int(id_)
 
 
-
 from HTMLParser import HTMLParser
+
+
 class SearchPageParser(HTMLParser):
     """
     Filling in a search form on http://open.adas.ac.uk generates a HTML document
@@ -129,17 +143,19 @@ class SearchPageParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if tag == 'table' and attrs.get('class') == 'searchresults':
+        if tag == 'table' and str(attrs.get('summary')).find('Results') != -1:
             self.search_results = True
-        if not self.search_results: return
+        if not self.search_results:
+            return
 
-        if tag == 'a' and self.line != None:
+        if tag == 'a' and self.line is not None:
             self.line.append(attrs['href'])
 
     def handle_endtag(self, tag):
         if tag == 'table':
             self.search_results = False
-        if not self.search_results: return
+        if not self.search_results:
+            return
 
         if tag == 'tr':
             self.lines.append(self.line)
