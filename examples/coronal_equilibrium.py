@@ -18,7 +18,7 @@ for element in elements:
     temperature = temperature_ranges.get(element, np.logspace(0, 3, 300))
     y = coronal.ionisation_stage_distribution(temperature, density=1e19)
 
-    plt.figure();
+    plt.figure()
     y.plot_vs_temperature()
     #plt.savefig('coronal_equilibrium_%s.pdf' % element)
 
