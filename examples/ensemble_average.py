@@ -134,21 +134,25 @@ if __name__ == '__main__':
     rt = atomic.RateEquations(atomic.element('carbon'))
     y = rt.solve(times, temperature, density)
 
-    taus = np.array([ 1e14, 1e15, 1e16, 1e17, 1e18])/density
+    taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18])/density
 
-    plt.figure(1); plt.clf()
+    plt.figure(1)
+    plt.clf()
     time_dependent_z(y, taus)
     plt.draw()
 
-    plt.figure(2); plt.clf()
+    plt.figure(2)
+    plt.clf()
     time_dependent_power(y, taus)
     plt.draw()
 
-    plt.figure(3); plt.clf()
+    plt.figure(3)
+    plt.clf()
     time_dependent_z(y, taus, ensemble_average=True)
     plt.draw()
 
-    plt.figure(4); plt.clf()
+    plt.figure(4)
+    plt.clf()
     time_dependent_power(y, taus, ensemble_average=True)
     plt.draw()
 
