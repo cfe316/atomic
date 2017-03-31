@@ -1,8 +1,8 @@
 # This example demonstrates the RateEquationsWithDiffusion class.
 # This solves the rate equations for the ionisation stages of
-# a given species evolving at different constant temperatures and 
-# fixed density. There is diffusion of all ionisation stages out of the system, 
-# and replacement by neutrals, such that the total number of 
+# a given species evolving at different constant temperatures and
+# fixed density. There is diffusion of all ionisation stages out of the system,
+# and replacement by neutrals, such that the total number of
 # ions stays fixed over time at 1.0.
 #
 # plots are shown of the time history of the stages at roughly 10eV,
@@ -22,7 +22,7 @@ tau = 1e-3
 times = np.logspace(-7, 0, 120)
 times -= times[0]
 
-rt = atomic.RateEquationsWithDiffusion(ad)
+rt = atomic.time_dependent_rates.RateEquationsWithDiffusion(ad)
 yy = rt.solve(times, temperature, density, tau)
 
 # time evolution of ionisation states at 10eV
