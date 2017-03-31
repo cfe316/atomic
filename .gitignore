@@ -100,3 +100,10 @@ build/temp.macosx-10.5-x86_64-2.7/src/xxdata_15/xxhkey.o
 build/temp.macosx-10.5-x86_64-2.7/src/xxdata_15/xxmkrp.o
 build/temp.macosx-10.5-x86_64-2.7/src/xxdata_15/xxrptn.o
 build/temp.macosx-10.5-x86_64-2.7/src/xxdata_15/xxslen.o
+adas_data/acd96_li.dat
+adas_data/ecd96_li.dat
+adas_data/plt96_li.dat
+adas_data/prb96_li.dat
+adas_data/scd96_li.dat
+adas_data/ycd96_li.dat
+adas_data/zcd96_li.dat
