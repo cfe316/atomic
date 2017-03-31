@@ -21,10 +21,10 @@ try:
 except NameError:
     from atomic.pec import TransitionPool
     ad = atomic.element('argon')
-    tp = TransitionPool.from_adf15('adas_data/transport_llu#ar*.dat')
+    tp = TransitionPool.from_adf15('adas_data/pec/transport_llu#ar*.dat')
     ad = tp.filter_energy(2e3, 20e3, 'eV').create_atomic_data(ad)
 
-eq = atomic.CollRadEquilibrium(ad)
+eq = atomic.CoronalEquilibrium(ad)
 y = eq.ionisation_stage_distribution(temperature, density)
 
 ne_tau = np.array([1e-1, 1e-2, 1e-3])
@@ -72,7 +72,7 @@ ax.set_ylim(ymax=2)
 #ax = ax3
 #lines_abundance = ax.semilogy(r, y.y.T*100)
 #ax.set_ylim(0.3, 400)
-#yy.y_collrad.replot_colored(line, lines_abundance)
+#yy.y_coronal.replot_colored(line, lines_abundance)
 
 
 def normalized_gradient(x, y):

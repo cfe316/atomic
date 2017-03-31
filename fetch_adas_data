@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-import adas
-import tarfile
+#!/Users/unterbee/anaconda/bin/python
+import atomic.adas as adas
 
 atomic_data = './adas_data'
-elements_years = [('lithium', 96), ('carbon', 96),
-                  ('argon', 89),   ('neon', 96), ('nitrogen', 96),
-                   ('beryllium', 96), ('boron', 89)]
+elements_years = [('carbon', 96), ('argon', 89), ('neon', 96), ('silicon', 96), ('boron', 89),
+                  ('tungsten', 50), ('helium', 96), ('hydrogen', 96), ('nitrogen', 96)]
 
 db = adas.OpenAdas()
 
@@ -15,21 +13,3 @@ for element, year in elements_years:
     for r in res:
         print r[1]
         db.fetch(r, atomic_data)
-
-for element, year in elements_years:
-    res = db.search_adf15(element)
-
-    for r in res:
-        print r[1]
-        db.fetch(r, atomic_data)
-
-destination = './src'
-for routine in (11,15):
-    fname = 'xxdata_' + str(routine) + '.tar.gz'
-    print "Downloading " + fname
-    db.fetch(('/code/' + fname, fname), destination)
-    tar = tarfile.open(destination + '/' + fname)
-    # here we specifically go against the prohibition in
-    # https://docs.python.org/2/library/tarfile.html#tarfile.TarFile.extractall
-    print "Extracting " + fname
-    tar.extractall(path=destination)

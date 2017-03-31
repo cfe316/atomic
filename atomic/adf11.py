@@ -7,8 +7,6 @@ detailed description of the possible subclasses.
 [2] http://www.adas.ac.uk/man/chap4-04.pdf
 """
 import os
-import numpy as np
-
 import _xxdata_11
 
 
@@ -20,7 +18,6 @@ adf11_classes = {
     'prb' : 4, # continuum radiation power
     'plt' : 8, # line radiation power
     'prc' : 5, # charge-exchange recombination radiation
-    'ecd' : 12 # effective ionisation potential
 }
 
 
@@ -38,15 +35,6 @@ parameters = {
 
 
 class Adf11(object):
-    """Represents the data in an ADF11 file.
-
-    Attributes:
-        name (string): a filename
-        class_ (string): 'acd' or 'scd', ...
-        element (string): short element name like 'c' or 'ar'
-        _raw_return_value (tuple): the output of the filereading code.
-
-    """
     def __init__(self, name):
         if not os.path.isfile(name):
             raise IOError("no such file: '%s'" % name)
@@ -93,37 +81,18 @@ class Adf11(object):
 
         # convert everything to SI + eV units
         d['log_density'] += 6 # log(cm^-3) = log(10^6 m^-3) = 6 + log(m^-3)
-        # the ecd (ionisation potential) class is already in eV units.
-        # admittedly this a cluge to store these non-rate-coefficient
-        # objects inside a RateCoefficient but it'll save a bunchton of code.
-        if self.class_ != 'ecd':
-            d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
-        else:
-            d['log_coeff'] = np.log10(d['log_coeff'][1:])
+        d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
         return d
 
     def _sniff_class(self):
         s = Sniffer(self.name)
         if s.class_ not in adf11_classes:
-            raise NotImplementedError('Unknown adf11 class: %s' % s.class_)
+            raise NotImplementedError('unknown adf11 class: %s' % s.class_)
         self.class_ = s.class_
         self.element = s.element
 
 
 class Sniffer(object):
-    """Inspector for a filename.
-
-    Holds a split-apart adf11 filename.
-
-    Attributes:
-        file_ (str): full filename
-        name (str): file's basename 'scd96r_li.dat'
-        element (str): short element name 'li'
-        year (str): short year name '96'
-        class_ (str): file type 'scd'
-        extension (str): should always be 'dat'
-        resolved (bool): true for this example, but should always be False.
-    """
     def __init__(self, file_):
         self.file_ = file_
         self.name = os.path.basename(file_)
@@ -147,7 +116,7 @@ class Sniffer(object):
 
     def _check(self):
         assert self.extension == 'dat'
-        assert self.resolved == False, 'Metastable resolved data not supported.'
+        assert self.resolved == False, 'metastable resolved data not supported.'
 
 
 if __name__ == '__main__':

@@ -1,0 +1,43 @@
+ADAS Fortran subroutine: xxdata_15
+----------------------------------
+
+Purpose:
+
+A fortran subroutine which reads the contents of an ADF15 file.
+
+This collection of files has been extracted from ADAS. It is the recommended
+that, for ADAS members, instead of using these subroutines you call the
+pre-compiled ADAS libraries. Manual compilation is only recommended when
+integration with non-standard compilers or operating systems (especially
+parallel architectures) is required.
+
+This archive can be obtained by direct CVS access or by download from the
+OPEN-ADAS system. Non-ADAS members who obtained these routines via a download
+should pay careful attention to the licensing terms contained in the LICENSE
+file.
+
+Contained in this archive are 
+
+Primary files
+-------------
+
+README		:	This file
+LICENSE		:	Licensing information
+COMPILING	:	Information on compilation
+xxdata_15.for	:	Main subroutine
+xxdata_15.pdf	:	Subroutine documentation
+
+Test files
+----------
+
+test.for	:	Test/example program
+test.dat	:	Test/example input file
+test.sh		:	Compiles and runs test program
+
+Necessary subroutines for use
+-----------------------------
+
+xxrptn.for	xxmkrp.for	i4unit.for
+i4fctn.for	r8fctn.for	xxhkey.for
+xxword.for	xxcase.for	i4eiz0.for
+xfelem.for	xxslen.for

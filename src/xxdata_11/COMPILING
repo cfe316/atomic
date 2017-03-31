@@ -1,0 +1,19 @@
+Compilation information for ADAS subroutines
+
+This documentation refers to official collection of files which have been
+extracted from ADAS. It is the recommended that, for ADAS members, instead of
+using these subroutines you call the pre-compiled ADAS libraries. Manual
+compilation is only recommended when integration with non-standard compilers or
+operating systems (especially parallel architectures) is required.
+
+As such, makefiles and compilation files are not supplied for subroutine
+collections since the expectation is that they will be integrated into a larger
+program. A simple test.sh script is included which shows simple compilation
+and use of the subroutine.
+
+The fortran routines have been tested with most UNIX versions of g77, gfortran,
+ifort (only version 9), pgf77, pgf90, and the Sun Fortran compiler.
+
+They have been minimally testing against the Absoft and NAG compilers with no
+real testing on other compilers. The Fortran is relatively clean so it is
+expected that most Fortran compilers should cope.

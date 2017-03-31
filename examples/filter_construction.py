@@ -1,12 +1,17 @@
-# This file should be run from the examples directory.
-# If this is running you should see three plots, each with red, green and blue lines, 
-# and red, breen , and blue crosses.
-
 import numpy as np
 import matplotlib.pyplot as plt
 
 import atomic
 from atomic.pec import TransitionPool
+
+
+def fetch_pec_data():
+    from atomic.adas import OpenAdas
+    db = OpenAdas()
+    res = db.search_adf15('carbon')
+    for r in res:
+        db.fetch(r, 'adas_data/pec')
+
 
 def plot_coeffs(ad, te, charge, **kwargs):
     ax = plt.gca()
@@ -37,8 +42,8 @@ def plot_coeffs(ad, te, charge, **kwargs):
 if __name__ == '__main__':
     ad = atomic.element('carbon')
 
-    tp = TransitionPool.from_adf15('../adas_data/pec96#c_pju*.dat')
-    #tp = tp.filter_energy(2e1, 20e3, 'eV')
+    tp = TransitionPool.from_adf15('adas_data/pec/pec96#c_pju*.dat')
+    #tp = tp.filter_energy(2e3, 20e3, 'eV')
     ad_filtered = tp.create_atomic_data(ad)
 
     te = np.logspace(0, 3)

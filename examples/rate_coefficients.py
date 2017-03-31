@@ -1,11 +1,7 @@
-# This example produces plots of the ionisation and
-# recombination rates of an element's ionisation stages,
-# from 1 to 10^4 eV. It's basically just reading the coefficients
-# from the ADAS ADF11 file and plotting them.
-
 import atomic
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 ad = atomic.element('carbon')
 temperature = np.logspace(0, 4, 100)

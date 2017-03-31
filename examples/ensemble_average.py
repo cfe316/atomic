@@ -96,7 +96,7 @@ def time_dependent_z(solution, times, ensemble_average=False):
     ax.set_ylim(0.4, y.atomic_data.nuclear_charge + 4)
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
-    z_mean = solution.y_collrad.mean_charge()
+    z_mean = solution.y_coronal.mean_charge()
     ax.loglog(solution.temperature, z_mean, color='black')
 
     ax.set_title(title)
@@ -120,8 +120,8 @@ def time_dependent_power(solution, times, ensemble_average=False):
     ax.set_ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
-    power_collrad = atomic.Radiation(solution.y_collrad).specific_power['total']
-    ax.loglog(solution.temperature, power_collrad, color='black')
+    power_coronal = atomic.Radiation(solution.y_coronal).specific_power['total']
+    ax.loglog(solution.temperature, power_coronal, color='black')
 
     ax.set_title(title)
 
@@ -134,21 +134,25 @@ if __name__ == '__main__':
     rt = atomic.RateEquations(atomic.element('carbon'))
     y = rt.solve(times, temperature, density)
 
-    taus = np.array([ 1e14, 1e15, 1e16, 1e17, 1e18])/density
+    taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18])/density
 
-    plt.figure(1); plt.clf()
+    plt.figure(1)
+    plt.clf()
     time_dependent_z(y, taus)
     plt.draw()
 
-    plt.figure(2); plt.clf()
+    plt.figure(2)
+    plt.clf()
     time_dependent_power(y, taus)
     plt.draw()
 
-    plt.figure(3); plt.clf()
+    plt.figure(3)
+    plt.clf()
     time_dependent_z(y, taus, ensemble_average=True)
     plt.draw()
 
-    plt.figure(4); plt.clf()
+    plt.figure(4)
+    plt.clf()
     time_dependent_power(y, taus, ensemble_average=True)
     plt.draw()
 

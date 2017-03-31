@@ -2,21 +2,9 @@ import numpy as np
 
 
 class FractionalAbundance(object):
-    """An array of ionisation stage fractions over density and/or temperature.
-
-    Attributes:
-        atomic_data (AtomicData): used by Radiation class
-            to get various coefficients.
-        y (np.array, 2D): stores the fractional abundance of each
-            ionisation stage, k=0 to Z, for each point
-            of the given temperatures and densities.
-            Shape is (Z+1,x)
-        temperature (array_like): list of temperatures [eV]
-        density (array_like): list of densities [m^-3]
-    """
     def __init__(self, atomic_data, y, temperature, density):
         self.atomic_data = atomic_data
-        self.y = y # fractional abundances of each charge state
+        self.y = y
         self.temperature = temperature
         self.density = density
 
@@ -24,15 +12,8 @@ class FractionalAbundance(object):
         """
         Compute the mean charge:
             <Z> = sum_k ( y_k * k )
-
-        Assumes that y is a 2D array with shape
-        (nuclear_charge+1,# of temperatures)
-
-        Returns:
-            An np.array of mean charge.
         """
 
-        # make a 2D array [[0],[1],[2],...]
         k = np.arange(self.y.shape[0])
         k = k[:,np.newaxis]
 
@@ -48,11 +29,6 @@ class FractionalAbundance(object):
                           n_e
 
         using the approximation <Z**2> = <Z>**2.
-
-        Assumes the main ion has charge +1.
-
-        Returns:
-            An np.array of Zeff
         """
         if ion_density is None:
             ion_density = self.density
@@ -65,12 +41,6 @@ class FractionalAbundance(object):
         return zeff
 
     def plot_vs_temperature(self, **kwargs):
-        """Use Matplotlib to plot the abundance of each stage at each point.
-
-        If the points all have the same temperature but different density,
-        this won't work.
-        """
-
         import matplotlib.pyplot as plt
         ax = kwargs.pop('ax', plt.gca())
 
