@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 from collections import OrderedDict
 
-import atomic
+import atomic as at
 
 elementColors = OrderedDict([
     ('argon', 'green'),
@@ -20,9 +20,9 @@ def Lz_radiated_power(rate_equations, taus, color):
     linestyles = ['dashed', 'solid', 'dashed']
     for i, tau in enumerate(taus):
         print tau * 1e3
-        times = np.logspace(-7, np.log10(tau*10), 20)
+        times = np.logspace(-7, np.log10(tau*1), 20)
         y = rt.solve(times, temperature, density, tau)
-        rad = atomic.Radiation(y.abundances[-1])
+        rad = at.Radiation(y.abundances[-1])
         plt.loglog(temperature, rad.specific_power['total'],
                 color=color, ls=linestyles[i])
 
@@ -32,13 +32,14 @@ if __name__ == '__main__':
     density = 1e20
     taus = np.array([0.2,0.5,2]) * 1e-3
 
-    plt.figure(1); plt.clf()
+    plt.figure(1)
+    plt.clf()
     plt.xlim(xmin=1, xmax=2e2)
     plt.ylim(ymin=1e-35, ymax=1e-30)
 
     legend_handles = []
     for elem, col in elementColors.items():
-        rt = atomic.RateEquationsWithDiffusion(atomic.element(elem))
+        rt = at.time_dependent_rates.RateEquationsWithDiffusion(at.element(elem))
         Lz_radiated_power(rt, taus, col)
         legend_handles.append(mlines.Line2D([],[],
                                color=col, label=rt.atomic_data.element))
