@@ -1,8 +1,8 @@
-# This is meant to remake Pitcher 1997's Figure 11, 
+# This is meant to remake Pitcher 1997's Figure 11,
 # Radiated power coefficient L_Z for carbon as a function of electron
 # temperature T_e for different values of residence parameter n_e \tau_res
 #
-# This appears to be the same (or nearly the same) as 
+# This appears to be the same (or nearly the same) as
 # Post 1995a (Journal of Nuclear Materials) "A review of recent
 # developments in atomic processes for divertors and edge plasmas"
 # Figure 17.
@@ -132,11 +132,12 @@ if __name__ == '__main__':
     temperature = np.logspace(np.log10(0.8), np.log10(3e3), 100)
     density = 1e19
 
-    rt = atomic.RateEquationsWithDiffusion(atomic.element('carbon'))
+    rt = atomic.time_dependent_rates.RateEquationsWithDiffusion(atomic.element('carbon'))
 
     taus = np.logspace(13,18,6)/density
 
-    plt.figure(1); plt.clf()
+    plt.figure(1)
+    plt.plt.clf()
     plt.xlim(xmin=0.2, xmax=1e4)
     plt.ylim(ymin=1e-35, ymax=1e-30)
     Lz_radiated_power(rt, taus)
