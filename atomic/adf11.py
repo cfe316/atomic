@@ -13,24 +13,24 @@ import _xxdata_11
 # Supported adf11 data classes.  See src/xxdata_11/xxdata_11.for for all the
 # twelve classes.
 adf11_classes = {
-    'acd' : 1, # recombination coefficients
-    'scd' : 2, # ionisation coefficients
-    'prb' : 4, # continuum radiation power
-    'plt' : 8, # line radiation power
-    'prc' : 5, # charge-exchange recombination radiation
+    'acd': 1,  # recombination coefficients
+    'scd': 2,  # ionisation coefficients
+    'prb': 4,  # continuum radiation power
+    'plt': 8,  # line radiation power
+    'prc': 5,  # charge-exchange recombination radiation
 }
 
 
 # Some hard coded parameters to run xxdata_11.for routine.  The values have
 # been take from src/xxdata_11/test.for, and should be OK for all files.
 parameters = {
-    'isdimd' : 200,
-    'iddimd' : 40,
-    'itdimd' : 50,
-    'ndptnl' : 4,
-    'ndptn' : 128,
-    'ndptnc' : 256,
-    'ndcnct' : 100
+    'isdimd': 200,
+    'iddimd': 40,
+    'itdimd': 50,
+    'ndptnl': 4,
+    'ndptn': 128,
+    'ndptnc': 256,
+    'ndcnct': 100
 }
 
 
@@ -42,7 +42,7 @@ class Adf11(object):
         self.name = name
 
     def read(self, class_=None):
-        if class_ == None:
+        if class_ is None:
             self._sniff_class()
         self._read_xxdata_11()
         return self._convert_to_dictionary()
@@ -54,13 +54,13 @@ class Adf11(object):
 
         iclass = adf11_classes[self.class_]
         iunit = _xxdata_11.helper_open_file(self.name)
-        ret =  _xxdata_11.xxdata_11(iunit, iclass, **parameters)
+        ret = _xxdata_11.xxdata_11(iunit, iclass, **parameters)
         _xxdata_11.helper_close_file(iunit)
 
         self._raw_return_value = ret
 
-        os.dup2(save, 1) # restore stdout
-        os.close(null_fds) # close the temporary fds
+        os.dup2(save, 1)  # restore stdout
+        os.close(null_fds)  # close the temporary fds
 
     def _convert_to_dictionary(self):
         ret = self._raw_return_value
@@ -116,7 +116,7 @@ class Sniffer(object):
 
     def _check(self):
         assert self.extension == 'dat'
-        assert self.resolved == False, 'metastable resolved data not supported.'
+        assert self.resolved is False, 'metastable resolved data not supported.'
 
 
 if __name__ == '__main__':
