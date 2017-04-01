@@ -6,9 +6,10 @@ from abundance import FractionalAbundance
 class CollRadEquilibrium(object):
     def __init__(self, atomic_data):
         self.atomic_data = atomic_data
-        self.ionisation_coeff = atomic_data.coeffs['ionisation'] # RateCoefficient objects
+        self.ionisation_coeff = atomic_data.coeffs['ionisation']  # RateCoefficient objects
         self.recombination_coeff = atomic_data.coeffs['recombination']
-        self.nuclear_charge = atomic_data.nuclear_charge #could be generalized to include metastables?
+        self.nuclear_charge = atomic_data.nuclear_charge  # could be generalized to include
+                                                          # metastables?
 
     def ionisation_stage_distribution(self, temperature, density):
         """Compute ionisation stage fractions for collrad equilibrium.
@@ -32,10 +33,9 @@ class CollRadEquilibrium(object):
             alpha = self.recombination_coeff(k, temperature, density)
             y[k+1] = y[k] * S / alpha
 
-        y /= y.sum(0) # fractional abundance
+        y /= y.sum(0)  # fractional abundance
         return FractionalAbundance(self.atomic_data, y, temperature, density)
 
 
 if __name__ == '__main__':
     pass
-
