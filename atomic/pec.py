@@ -10,7 +10,7 @@ from atomic_data import RateCoefficient
 
 class Transition(object):
     def __init__(self, type_, element, nuclear_charge, charge, wavelength,
-            temperature, density, pec):
+                 temperature, density, pec):
         self.element = element
         self.nuclear_charge = nuclear_charge
         self.charge = charge
@@ -47,7 +47,8 @@ class Transition(object):
 
 class TransitionPool(object):
     def __init__(self, transitions=None):
-        if transitions == None: transitions = []
+        if transitions is None:
+            transitions = []
 
         self.transitions = transitions
 
@@ -224,4 +225,3 @@ class CoefficientFactory(object):
 
     def _conforming(self, t):
         return t.nuclear_charge == self.nuclear_charge
-
