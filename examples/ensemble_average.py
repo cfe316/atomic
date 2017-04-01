@@ -113,8 +113,7 @@ def time_dependent_power(solution, times, ensemble_average=False):
     ax = plt.gca()
     for y in solution.select_times(times):
         rad = atomic.Radiation(y)
-        ax.loglog(solution.temperature, rad.specific_power['total'],
-                color='black', ls='--')
+        ax.loglog(solution.temperature, rad.specific_power['total'], color='black', ls='--')
 
     ax.set_xlabel(r'$T_\mathrm{e}\ \mathrm{(eV)}$')
     ax.set_ylabel(r'$P/n_\mathrm{i} n_\mathrm{e}\ [\mathrm{W m^3}]$')
@@ -128,13 +127,13 @@ def time_dependent_power(solution, times, ensemble_average=False):
 
 if __name__ == '__main__':
     times = np.logspace(-7, 0, 100)
-    temperature = np.logspace(0, 3, 100)
+    temperature = np.logspace(0, 4, 100)
     density = 1e19
 
     rt = atomic.RateEquations(atomic.element('carbon'))
     y = rt.solve(times, temperature, density)
 
-    taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18])/density
+    taus = np.array([1e13, 1e14, 1e15, 1e16, 1e17, 1e18])/density
 
     plt.figure(1)
     plt.clf()
