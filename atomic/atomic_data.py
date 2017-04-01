@@ -6,6 +6,13 @@ from sys import float_info
 
 from adf11 import Adf11
 
+hydrogen_data = {
+    'ionisation': 'scd96_h.dat',
+    'recombination': 'acd96_h.dat',
+    'continuum_power': 'prb96_h.dat',
+    'line_power': 'plt96_h.dat',
+    'cx_power': 'prc96_h.dat',
+}
 
 argon_data = {
     'ionisation': 'scd89_ar.dat',
@@ -71,6 +78,8 @@ def _element_data(element):
     e = element.lower()
     if e in ['ar', 'argon']:
         return argon_data
+    if e in ['h', 'hydrogen']:
+        return hydrogen_data
     elif e in ['c', 'carbon']:
         return carbon_data
     elif e in ['ne', 'neon']:
