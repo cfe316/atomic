@@ -12,12 +12,12 @@ import _xxdata_15
 # values have been take from src/xxdata_15/test.for, and should be OK for
 # all files.
 parameters = {
-    'nstore' : 500,
-    'nddim' : 50,
-    'ntdim' : 40,
-    'ndptnl' : 4,
-    'ndptn' : 128,
-    'ndptnc' : 256,
+    'nstore': 500,
+    'nddim': 50,
+    'ntdim': 40,
+    'ndptnl': 4,
+    'ndptn': 128,
+    'ndptnc': 256,
     'ndcnct' : 100,
     'ndstack' : 40,
     'ndcmt' : 2000,
