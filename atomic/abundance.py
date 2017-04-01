@@ -15,7 +15,7 @@ class FractionalAbundance(object):
         """
 
         k = np.arange(self.y.shape[0])
-        k = k[:,np.newaxis]
+        k = k[:, np.newaxis]
 
         z_mean = np.sum(self.y * k, axis=0)
         return z_mean
@@ -91,4 +91,3 @@ class FractionalAbundance(object):
         for i, line_ref in enumerate(lines_ref):
             mask = imax == i
             lines.append(ax.plot(x[mask], y[mask], color=line_ref.get_color()))
-
