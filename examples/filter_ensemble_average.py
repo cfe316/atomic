@@ -18,7 +18,7 @@ if __name__ == '__main__':
     rt = atomic.RateEquations(ad)
     y = rt.solve(times, temperature, density)
 
-    taus = np.array([ 1e14, 1e15, 1e16, 1e17, 1e18])/density
+    taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18])/density
 
     plt.figure(2); plt.clf()
     time_dependent_power(y, taus)
