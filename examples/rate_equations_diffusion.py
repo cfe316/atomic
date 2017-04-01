@@ -26,9 +26,10 @@ rt = atomic.time_dependent_rates.RateEquationsWithDiffusion(ad)
 yy = rt.solve(times, temperature, density, tau)
 
 # time evolution of ionisation states at 10eV
-y_fixed_temperature = yy.at_temperature(10) # has shape (nTimes, nuclear_charge+1) = (120,7)
+y_fixed_temperature = yy.at_temperature(10)  # has shape (nTimes, nuclear_charge+1) = (120,7)
 
-fig = plt.figure(1); plt.clf()
+fig = plt.figure(1)
+plt.clf()
 ax = fig.add_subplot(111)
 lines_ref = ax.semilogx(times, y_fixed_temperature)
 ax.set_xlabel(r'$t\ [\mathrm{s}]$')
