@@ -3,6 +3,7 @@ from scipy.integrate import odeint
 
 from abundance import FractionalAbundance
 
+
 class RateEquations(object):
     def __init__(self, atomic_data):
         self.atomic_data = atomic_data
@@ -46,7 +47,7 @@ class RateEquations(object):
 
         y = y_.reshape(self.y_shape)
 
-        for k in xrange(self.nuclear_charge + 1): #FIXME: number of charge states
+        for k in xrange(self.nuclear_charge + 1):  # FIXME: number of charge states
             if k == 0:
                 gain = y[k+1]*alpha[k]
                 loss = y[k] * S[k]
@@ -77,15 +78,15 @@ class RateEquations(object):
         current = slice(1, -1)
         upper = slice(2, None)
         lower = slice(None, -2)
-        dydt[current]  = y[lower] * S[lower]
+        dydt[current] = y[lower] * S[lower]
         dydt[current] += y[upper] * alpha_to[current]
         dydt[current] -= y[current] * S[current]
         dydt[current] -= y[current] * alpha_to[lower]
 
-        current, upper = 0, 1 # neutral and single ionised state
+        current, upper = 0, 1  # neutral and single ionised state
         dydt[current] = y[upper] * alpha_to[current] - y[current] * S[current]
 
-        current, lower = -1, -2 # fully stripped and 1 electron state
+        current, lower = -1, -2  # fully stripped and 1 electron state
         dydt[current] = y[lower] * S[lower] - y[current] * alpha_to[lower]
         dydt *= ne
 
@@ -118,20 +119,19 @@ class RateEquations(object):
         S_lower = np.roll(S, +1, axis=0)
         alpha_to_lower = np.roll(alpha_to, +1, axis=0)
 
-        dydt  = y_lower * S_lower
+        dydt = y_lower * S_lower
         dydt += y_upper * alpha_to
         dydt -= y * S
         dydt -= y * alpha_to_lower
 
-        current, upper = 0, 1 # neutral and single ionised state
+        current, upper = 0, 1  # neutral and single ionised state
         dydt[current] = y[upper] * alpha_to[current] - y[current] * S[current]
 
-        current, lower = -1, -2 # fully stripped and 1 electron state
+        current, lower = -1, -2  # fully stripped and 1 electron state
         dydt[current] = y[lower] * S[lower] - y[current] * alpha_to[lower]
         dydt *= ne
 
         return dydt.ravel()
-
 
     def solve(self, time, temperature, density):
         """
@@ -149,12 +149,12 @@ class RateEquations(object):
 
         self._set_temperature_and_density_grid(temperature, density)
         self._set_initial_conditions()
-        solution  = odeint(self.derivs_optimized, self.y, time)
+        solution = odeint(self.derivs_optimized, self.y, time)
 
         abundances = []
         for s in solution.reshape(time.shape + self.y_shape):
             abundances.append(FractionalAbundance(self.atomic_data, s, self.temperature,
-                self.density))
+                                                  self.density))
 
         return RateEquationsSolution(time, abundances)
 
@@ -163,7 +163,7 @@ class RateEquationsWithDiffusion(RateEquations):
     def derivs_optimized(self, y, t):
         dydt = super(self.__class__, self).derivs_optimized(y, t)
 
-        ne = self.density
+        # ne = self.density
         tau = self.diffusion_time
 
         dydt -= y/tau
@@ -195,8 +195,7 @@ class RateEquationsSolution(object):
         """
         from coronal import CoronalEquilibrium
         eq = CoronalEquilibrium(self.atomic_data)
-        y_coronal = eq.ionisation_stage_distribution(self.temperature,
-                self.density)
+        y_coronal = eq.ionisation_stage_distribution(self.temperature, self.density)
 
         self.y_coronal = y_coronal
 
@@ -206,8 +205,7 @@ class RateEquationsSolution(object):
         return self.abundances[key]
 
     def at_temperature(self, temperature_value):
-        temperature_index = np.searchsorted(self.temperature,
-                temperature_value)
+        temperature_index = np.searchsorted(self.temperature, temperature_value)
 
         return np.array([y.y[:, temperature_index] for y in self.abundances])
 
@@ -250,11 +248,10 @@ class RateEquationsSolution(object):
         new_concentrations = []
         for y in concentrations:
             f = FractionalAbundance(self.atomic_data, y, self.temperature,
-                    self.density)
+                                    self.density)
             new_concentrations.append(f)
         return self.__class__(times, new_concentrations)
 
 
 if __name__ == '__main__':
     pass
-
