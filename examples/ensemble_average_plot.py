@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
 import atomic
 
 
@@ -72,7 +73,7 @@ class AnnotateRight(object):
             va = self.va
 
             self.axes.annotate(text, xy, xycoords='axes fraction',
-                va=va, ha=ha, size='small')
+                               va=va, ha=ha, size='small')
 
 
 def annotate_lines(texts, **kwargs):
@@ -80,7 +81,7 @@ def annotate_lines(texts, **kwargs):
     AnnotateRight(ax.lines, texts, **kwargs)
 
 
-def time_dependent_z(solution, times, ensemble_average=False):
+def time_dependent_z_Plot(solution, times, ensemble_average=False):
     element = solution.atomic_data.element
     if ensemble_average:
         solution = solution.ensemble_average()
@@ -90,19 +91,22 @@ def time_dependent_z(solution, times, ensemble_average=False):
 
     ax = plt.gca()
     for y in solution.select_times(times):
-        ax.loglog(solution.temperature, y.mean_charge(), color='black', ls='--')
+        ax.semilogx(solution.temperature, y.mean_charge(), color='black', ls='--')
 
     ax.set_xlabel(r'$T_\mathrm{e}\ \mathrm{(eV)}$')
     ax.set_ylim(0.4, y.atomic_data.nuclear_charge + 4)
     annotate_lines(['$10^{%d}$' % i for i in np.log10(times * solution.density)])
 
     z_mean = solution.y_coronal.mean_charge()
-    ax.loglog(solution.temperature, z_mean, color='black')
+    ax.semilogx(solution.temperature, z_mean, color='black')
+    AnnotateRight(ax.lines[-1:], ['$\infty$'])
+    # plt.ylim(0,10)
+    # plt.text(2e3, 10, r'$n_e \tau \; [\mathrm{m}^{-3} \, \mathrm{s}]$')
 
     ax.set_title(title)
 
 
-def time_dependent_power(solution, times, ensemble_average=False):
+def time_dependent_power_Plot(solution, times, ensemble_average=False):
     element = solution.atomic_data.element
     if ensemble_average:
         solution = solution.ensemble_average()
@@ -121,38 +125,40 @@ def time_dependent_power(solution, times, ensemble_average=False):
 
     power_coronal = atomic.Radiation(solution.y_coronal).specific_power['total']
     ax.loglog(solution.temperature, power_coronal, color='black')
+    AnnotateRight(ax.lines[-1:], ['$\infty$'])
 
     ax.set_title(title)
+    # plt.text(2e3, 3e-31, r'$n_e \tau \; [\mathrm{m}^{-3} \, \mathrm{s}]$')
 
 
 if __name__ == '__main__':
     times = np.logspace(-7, 0, 100)
-    temperature = np.logspace(0, 4, 100)
+    temperature = np.logspace(np.log10(.75), np.log10(30e3), 200)
     density = 1e19
 
-    rt = atomic.RateEquations(atomic.element('carbon'))
+    rt = atomic.RateEquations(atomic.element('tungsten'))
     y = rt.solve(times, temperature, density)
 
     taus = np.array([1e13, 1e14, 1e15, 1e16, 1e17, 1e18])/density
 
-    plt.figure(1)
-    plt.clf()
-    time_dependent_z(y, taus)
-    plt.draw()
-
-    plt.figure(2)
-    plt.clf()
-    time_dependent_power(y, taus)
-    plt.draw()
+    # plt.figure(1)
+    # plt.clf()
+    # time_dependent_z_Plot(y, taus)
+    # plt.draw()
+    #
+    # plt.figure(2)
+    # plt.clf()
+    # time_dependent_power_Plot(y, taus)
+    # plt.draw()
 
     plt.figure(3)
     plt.clf()
-    time_dependent_z(y, taus, ensemble_average=True)
+    time_dependent_z_Plot(y, taus, ensemble_average=True)
     plt.draw()
 
     plt.figure(4)
     plt.clf()
-    time_dependent_power(y, taus, ensemble_average=True)
+    time_dependent_power_Plot(y, taus, ensemble_average=True)
     plt.draw()
 
     plt.show()
