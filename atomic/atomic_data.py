@@ -73,6 +73,13 @@ lithium_data = {
     'line_power': 'plt96_li.dat',
 }
 
+helium_data = {
+    'ionisation': 'scd96_he.dat',
+    'recombination': 'acd96_he.dat',
+    'continuum_power': 'prb96_he.dat',
+    'line_power': 'plt96_he.dat',
+}
+
 
 def _element_data(element):
     e = element.lower()
@@ -94,6 +101,8 @@ def _element_data(element):
         return nitrogen_data
     elif e in ['li', 'lithium']:
         return lithium_data
+    elif e in ['he', 'helium']:
+        return helium_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
