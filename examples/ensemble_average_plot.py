@@ -134,12 +134,12 @@ def time_dependent_power_Plot(solution, times, ensemble_average=False):
 if __name__ == '__main__':
     times = np.logspace(-7, 0, 100)
     temperature = np.logspace(np.log10(.75), np.log10(30e3), 200)
-    density = 1e19
+    density = 1e20
 
-    rt = atomic.RateEquations(atomic.element('tungsten'))
+    rt = atomic.RateEquations(atomic.element('carbon'))
     y = rt.solve(times, temperature, density)
 
-    taus = np.array([1e13, 1e14, 1e15, 1e16, 1e17, 1e18])/density
+    taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18, 1e19])/density
 
     # plt.figure(1)
     # plt.clf()
