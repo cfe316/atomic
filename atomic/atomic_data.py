@@ -87,6 +87,14 @@ beryllium_data = {
     'line_power': 'plt96_be.dat',
 }
 
+iron_data = {
+    'ionisation': 'scd89_fe.dat',
+    'recombination': 'acd89_fe.dat',
+    'continuum_power': 'prb89_fe.dat',
+    'line_power': 'plt89_fe.dat',
+}
+
+
 def _element_data(element):
     e = element.lower()
     if e in ['ar', 'argon']:
@@ -111,6 +119,8 @@ def _element_data(element):
         return helium_data
     elif e in ['be', 'beryllium']:
         return beryllium_data
+    elif e in ['fe', 'iron']:
+        return iron_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
