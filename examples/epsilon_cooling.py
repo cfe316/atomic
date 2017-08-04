@@ -14,6 +14,7 @@ elementColors = OrderedDict([
     ('lithium', 'green'),
 ])
 
+
 def plotEps(ad, color):
     rt = atomic.RateEquationsWithDiffusion(ad)
     min_log_temp = ad.coeffs['ionisation'].log_temperature[0]
@@ -41,4 +42,3 @@ plt.xlim(xmin=0.4, xmax=2000)
 plt.legend(loc='best')
 plt.grid(True)
 plt.show()
-
