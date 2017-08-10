@@ -1,13 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import atomic
-    
+import atomic.atomic as atomic
+
 ad = atomic.element('carbon')
 
 temperature = np.logspace(0, 3, 50)
-density = 1e19
-tau = 1e19 / density
+density = 1e20
+tau = 1e20 / density
 
 t_normalized = np.logspace(-7, 0, 50)
 t_normalized -= t_normalized[0]
@@ -22,7 +22,8 @@ y_fixed_temperature = yy.at_temperature(38)
 # steady state time
 tau_ss = yy.steady_state_time()
 
-fig = plt.figure(1); plt.clf()
+fig = plt.figure(1)
+plt.clf()
 ax = fig.add_subplot(111)
 lines_ref = ax.semilogx(times/tau, y_fixed_temperature)
 ax.set_xlabel(r'$t\ [\mathrm{s}]$')
@@ -31,7 +32,8 @@ ax.set_xlim(xmin=0)
 plt.draw()
 
 
-fig = plt.figure(2); fig.clf()
+fig = plt.figure(2)
+fig.clf()
 ax = fig.add_subplot(111)
 
 line, = ax.loglog(temperature, tau_ss * density, visible=False)
@@ -41,9 +43,10 @@ ax.set_ylabel(r'$n_\mathrm{e} \tau_\mathrm{ss}\ [\mathrm{m^{-3} s}]$')
 plt.draw()
 
 
-fig = plt.figure(3); fig.clf()
+fig = plt.figure(3)
+fig.clf()
 
-tau = np.array([ 1e18, 1e15, 1e14]) / density
+tau = np.array([1e18, 1e15, 1e14]) / density
 log_netau = np.log10(density * tau)
 
 ybar = yy.ensemble_average()
