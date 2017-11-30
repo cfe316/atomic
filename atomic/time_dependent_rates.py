@@ -216,7 +216,7 @@ class RateEquationsSolution(object):
 
     def select_times(self, time_instances):
         indices = np.searchsorted(self.times, time_instances)
-        f = [self[i] for i in indices]
+        f = [self[int(i)] for i in indices]
         times = self.times[indices]
 
         return self.__class__(times, f)
