@@ -13,23 +13,23 @@ for element, year in elements_years:
     res = db.search_adf11(element, year)
 
     for r in res:
-        print r[1]
+        print(r[1])
         db.fetch(r, atomic_data)
 
 for element, year in elements_years:
     res = db.search_adf15(element)
 
     for r in res:
-        print r[1]
+        print(r[1])
         db.fetch(r, atomic_data)
 
 destination = './src'
 for routine in (11,15):
     fname = 'xxdata_' + str(routine) + '.tar.gz'
-    print "Downloading " + fname
+    print("Downloading " + fname)
     db.fetch(('/code/' + fname, fname), destination)
     tar = tarfile.open(destination + '/' + fname)
     # here we specifically go against the prohibition in
     # https://docs.python.org/2/library/tarfile.html#tarfile.TarFile.extractall
-    print "Extracting " + fname
+    print("Extracting " + fname)
     tar.extractall(path=destination)

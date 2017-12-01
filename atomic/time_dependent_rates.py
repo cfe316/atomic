@@ -1,8 +1,8 @@
 import numpy as np
 import scipy.integrate
 
-from abundance import FractionalAbundance
-from collisional_radiative import CollRadEquilibrium
+from .abundance import FractionalAbundance
+from .collisional_radiative import CollRadEquilibrium
 
 class RateEquations(object):
     """
@@ -54,7 +54,7 @@ class RateEquations(object):
 
         recombination_coeff = self.atomic_data.coeffs['recombination']
         ionisation_coeff = self.atomic_data.coeffs['ionisation']
-        for k in xrange(self.nuclear_charge):
+        for k in range(self.nuclear_charge):
             S[k] = ionisation_coeff(k, self.temperature, self.density)
             alpha[k] = recombination_coeff(k, self.temperature, self.density)
 
@@ -195,7 +195,7 @@ class RateEquationsSolution(object):
         z_mean_ref = self.y_collrad.mean_charge()
 
         tau_ss = np.zeros_like(self.temperature)
-        for t, f in reversed(zip(self.times, self.abundances)):
+        for t, f in reversed(list(zip(self.times, self.abundances))):
             z_mean = f.mean_charge()
             mask = np.abs(z_mean/z_mean_ref - 1) <= rtol
             tau_ss[mask] = t
@@ -216,7 +216,7 @@ class RateEquationsSolution(object):
 
     def select_times(self, time_instances):
         indices = np.searchsorted(self.times, time_instances)
-        f = [self[i] for i in indices]
+        f = [self[int(i)] for i in indices]
         times = self.times[indices]
 
         return self.__class__(times, f)

@@ -29,8 +29,8 @@ tau = 1e-5
 density = 1e20
 times = np.logspace(-7, np.log10(tau) + 1, 120)
 
-for el, c in elementColors.items(): 
-    print el
+for el, c in list(elementColors.items()): 
+    print(el)
     plotEps(atomic.element(el), c)
 
 plt.title(r'$n_e = \; '+ str(density)+ r'\; [m^{-3}]$, $ \tau = 1e'+str(int(np.log10(tau)))+'\;[s]$, dashed=rad only, solid=with ionization')

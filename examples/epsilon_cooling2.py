@@ -37,7 +37,7 @@ def netauplot(netau):
     """ Create a subplot for given ne * tau."""
     taus = netau / densities
 
-    for i in xrange(len(densities)):
+    for i in range(len(densities)):
         density = densities[i]
         tau = taus[i]
         for e in elementColors: 
@@ -62,7 +62,7 @@ def netauplot(netau):
     ax = plt.gca().add_artist(elements_legend)
 
     lh = []
-    for i in xrange(len(densities)):
+    for i in range(len(densities)):
         d = num2str(densities[i])
         tau = num2str(taus[i])
         lab = r'$n_e = 10^{' + d + r'},\; \tau = 10^{'+ tau + '}$'
@@ -74,7 +74,7 @@ def netauplot(netau):
 
 plt.close('all')
 
-for i in xrange(4):
+for i in range(4):
     plt.subplot(2,2,i+1)
     netauplot(np.power(10,14+i))
 

@@ -3,7 +3,7 @@ import os
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-from adf11 import Adf11
+from .adf11 import Adf11
 
 datatype_abbrevs = {
         'ionisation' : 'scd',
@@ -56,7 +56,7 @@ def _element_data_dict(el_symbol, el_year, has_cx_power=False):
        and whether or not it has cx_power
     """
     data_dict = {}
-    for key, value in datatype_abbrevs.iteritems():
+    for key, value in datatype_abbrevs.items():
         data_dict[key] = _make_filename(el_symbol, el_year, value)
     if not has_cx_power:
         data_dict.pop('cx_power', None)
@@ -141,7 +141,7 @@ class AtomicData(object):
         """
         new_coeffs = {}
         #iteritems() is a method on dicts that gives an iterator
-        for key, value in self.coeffs.iteritems():
+        for key, value in self.coeffs.items():
             new_coeffs[key] = value.copy()
 
         return self.__class__(new_coeffs)
@@ -157,7 +157,7 @@ class AtomicData(object):
         nuclear_charge = set()
         element = set()
         #coeff are the RateCoefficient objects
-        for coeff in self.coeffs.values():
+        for coeff in list(self.coeffs.values()):
             nuclear_charge.add(coeff.nuclear_charge)
             element.add(coeff.element.lower())
 
@@ -183,7 +183,7 @@ class AtomicData(object):
         element_data = _element_data(element)
 
         coefficients = {}
-        for key, value in element_data.iteritems():
+        for key, value in element_data.items():
             fullfilename = _full_path(value)
             coefficients[key] = RateCoefficient.from_adf11(fullfilename)
 
@@ -260,7 +260,7 @@ class RateCoefficient(object):
         # if we want to implement metastables there are more sets of coefficients
         # than just for nuclear charge. This should be TODO'd.
         # Also for stuff like ecd: ionisation potentials there is nuclear_charge + 1
-        for k in xrange(self.nuclear_charge):
+        for k in range(self.nuclear_charge):
             x = self.log_temperature
             y = self.log_density
             z = self.log_coeff[k]

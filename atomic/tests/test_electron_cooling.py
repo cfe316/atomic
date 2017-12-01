@@ -20,7 +20,7 @@ class TestElectronCooling(unittest.TestCase):
                     'cx_power', 'line_power', 
                     'continuum_power', 'rad_total',
                     'total']
-        result = self.elc.power.keys()
+        result = list(self.elc.power.keys())
         self.assertItemsEqual(expected, result)
 
     def test_rad_total(self):

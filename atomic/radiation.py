@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from atomic_data import ZeroCoefficient
+from .atomic_data import ZeroCoefficient
+from functools import reduce
 
 
 class Radiation(object):
@@ -34,7 +35,7 @@ class Radiation(object):
     def specific_power(self):
         """Power per electron per impurity nucleus, [W m^3]"""
         power = self.power
-        for key in power.keys():
+        for key in list(power.keys()):
             power[key] /= self.electron_density * self.get_impurity_density()
         return power
 
@@ -69,7 +70,7 @@ class Radiation(object):
 
         power_coeffs = self._get_power_coeffs()
         radiation_power = {}
-        for key in power_coeffs.keys():
+        for key in list(power_coeffs.keys()):
             radiation_power[key] = np.zeros(shape_)
 
         ne = self.electron_density
@@ -77,8 +78,8 @@ class Radiation(object):
         n0 = self.get_neutral_density()
         y = self.y
 
-        for k in xrange(self.atomic_data.nuclear_charge):
-            for key in radiation_power.keys():
+        for k in range(self.atomic_data.nuclear_charge):
+            for key in list(radiation_power.keys()):
                 coeff = power_coeffs[key](k, self.temperature,
                         self.electron_density)
 
@@ -94,10 +95,10 @@ class Radiation(object):
 
         # compute the total power
         radiation_power['total'] = reduce(lambda x,y: x+y,
-                radiation_power.values())
+                list(radiation_power.values()))
 
         # sum over all ionisation stages
-        for key in radiation_power.keys():
+        for key in list(radiation_power.keys()):
             radiation_power[key] = radiation_power[key].sum(0)
 
         return radiation_power

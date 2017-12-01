@@ -1,7 +1,7 @@
 import os
 import errno
 import shutil
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 open_adas = 'http://open.adas.ac.uk/'
 
@@ -30,13 +30,13 @@ class OpenAdas(object):
         else:
             __, path = url_filename
 
-        tmpfile, __ = urllib.urlretrieve(url)
-
         dst_filename = os.path.join(self.dst_directory, path)
-        self._mkdir_p(os.path.dirname(dst_filename))
+        if not os.path.exists(dst_filename):
+            tmpfile, __ = urllib.request.urlretrieve(url)
 
+            self._mkdir_p(os.path.dirname(dst_filename))
 
-        shutil.move(tmpfile, dst_filename)
+            shutil.move(tmpfile, dst_filename)
 
     def _construct_url(self, url_filename):
         """
@@ -86,8 +86,8 @@ class AdasSearch(object):
         return self._parse_data()
 
     def _retrieve_search_page(self):
-        search_url =  self.url + urllib.urlencode(self.parameters)
-        res, __ = urllib.urlretrieve(search_url)
+        search_url =  self.url + urllib.parse.urlencode(self.parameters)
+        res, __ = urllib.request.urlretrieve(search_url)
         self.data = open(res).read()
         os.remove(res)
 
@@ -119,7 +119,7 @@ class AdasSearch(object):
         return int(id_)
 
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 class SearchPageParser(HTMLParser):
     """
     Filling in a search form on http://open.adas.ac.uk generates a HTML document

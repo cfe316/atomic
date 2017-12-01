@@ -50,7 +50,7 @@ class TestRateEquationsWithDiffusion(unittest.TestCase):
         rt = atomic.RateEquationsWithDiffusion(ad)
         yy = rt.solve(times, temperature, density, tau)
         expected = np.ones(len(times))
-        result = [np.sum(yy.abundances[i].y)/len(temperature) for i in xrange(len(times))]
+        result = [np.sum(yy.abundances[i].y)/len(temperature) for i in range(len(times))]
         np.testing.assert_array_almost_equal(expected, result)
 
 class TestRateEquationsSolution(unittest.TestCase):

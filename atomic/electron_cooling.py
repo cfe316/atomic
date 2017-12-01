@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from atomic_data import ZeroCoefficient
-from radiation import Radiation
+from .atomic_data import ZeroCoefficient
+from .radiation import Radiation
+from functools import reduce
 
 # This class is almost a copy of Radiation; only 
 # _get_staging_coeffs / _get_power_coeffs and _compute_power are different.
@@ -52,7 +53,7 @@ class ElectronCooling(object):
     def specific_power(self):
         """Power per electron per impurity nucleus, [W m^3]"""
         power = self.power
-        for key in power.keys():
+        for key in list(power.keys()):
             power[key] /= self.electron_density * self.get_impurity_density()
         return power
 
@@ -100,7 +101,7 @@ class ElectronCooling(object):
         ni = self.get_impurity_density()
         y = self.y # a FractionalAbundance
 
-        for k in xrange(self.atomic_data.nuclear_charge):
+        for k in range(self.atomic_data.nuclear_charge):
             # in joules per ionisation stage transition
             # note that the temperature and density don't matter for the potential.
             potential = self.eV * staging_coeffs['ionisation_potential'](k, self.temperature, self.electron_density)
@@ -119,7 +120,7 @@ class ElectronCooling(object):
                 staging_power[key][k] = sign * scale * coeff
 
         # sum over all ionisation stages
-        for key in staging_power.keys():
+        for key in list(staging_power.keys()):
             staging_power[key] = staging_power[key].sum(0)
 
         # now get the radiation power.
@@ -130,9 +131,9 @@ class ElectronCooling(object):
 
         # this is a Bad Idea on how to merge two dicts but oh well
         # http://stackoverflow.com/questions/38987/how-can-i-merge-two-python-dictionaries-in-a-single-expression
-        cooling_power = dict(rad_power.items() + staging_power.items())
+        cooling_power = dict(list(rad_power.items()) + list(staging_power.items()))
         cooling_power['total'] = reduce(lambda x,y: x+y,
-                cooling_power.values())
+                list(cooling_power.values()))
         cooling_power['rad_total'] = rad_total
 
         return cooling_power
