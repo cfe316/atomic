@@ -11,7 +11,7 @@ Installation and running the code
 Required code from OPEN-ADAS:
 
     $ ./fetch_adas_data # fetch the atomic data and reading routines
-    $ python setup.py build_ext --inplace # to compile the extension module
+    $ python3 setup.py build_ext --inplace # to compile the extension module
 
 See below for details.
 
@@ -51,7 +51,7 @@ Compiling python extension module
 
 The extension module is compiled using numpy.distutils:
 
-    $ python setup.py build_ext --inplace
+    $ python3 setup.py build_ext --inplace
 
 
 Testing
