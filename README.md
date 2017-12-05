@@ -28,7 +28,6 @@ Try one of the examples:
     $ python3 examples/radiation.py
 
 Or launch `jupyter notebook` (with a python3 kernel):
-(in the notebook)
     
     >>> %run examples/radiation.py
 
