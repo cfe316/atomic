@@ -16,12 +16,13 @@ class TestElectronCooling(unittest.TestCase):
 
     def test_keys(self):
         """Makes sure ElectronCooling has all the right keys"""
-        expected = ['ionisation', 'recombination', 
+        expected = {'ionisation', 'recombination', 
                     'cx_power', 'line_power', 
                     'continuum_power', 'rad_total',
-                    'total']
-        result = list(self.elc.power.keys())
-        self.assertItemsEqual(expected, result)
+                    'total'}
+        result = set(self.elc.power.keys())
+        #self.assertItemsEqual(expected, result)
+        self.assertEqual(expected, result)
 
     def test_rad_total(self):
         """Tests that rad_total is what I think it is."""

@@ -25,7 +25,8 @@ class TestCollRadEquilibrium(unittest.TestCase):
         ne = np.array([1e19])
         fab = self.eq.ionisation_stage_distribution(Te, ne)
         expected = 1.0
-        self.assertAlmostEqual(fab.y[0], expected, 3)
+        #self.assertAlmostEqual(fab.y[0], expected, 3)
+        np.testing.assert_array_almost_equal(fab.y[0], expected, 3)
 
     def test_ionisation_stage_distribution_hot(self):
         """Test that a very hot plasma will be almost entirely fully ionized.
@@ -34,7 +35,8 @@ class TestCollRadEquilibrium(unittest.TestCase):
         ne = np.array([1e19])
         fab = self.eq.ionisation_stage_distribution(Te, ne)
         expected = 1.0
-        self.assertAlmostEqual(fab.y[-1], expected, 3)
+        #self.assertAlmostEqual(fab.y[-1], expected, 3)
+        np.testing.assert_array_almost_equal(fab.y[-1], expected, 3)
 
     def test_ionisation_stage_distribution_normalized(self):
         Te = np.array([1e1])

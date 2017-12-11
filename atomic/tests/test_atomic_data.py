@@ -61,7 +61,7 @@ class TestRateCoefficient(unittest.TestCase):
 
     def test___call__(self):
         """Units are in [m^3/s]"""
-        expected = np.array([2.068e-13])
+        expected = 2.068e-13
         result = self.rc(0, 10, 1e19)
         self.assertAlmostEqual(expected, result, 3)
 
