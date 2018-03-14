@@ -1,8 +1,8 @@
-#!/Users/unterbee/anaconda/bin/python
+#!/Users/e9u/anaconda3/bin/python
 import atomic.adas as adas
 
 atomic_data = './adas_data'
-elements_years = [('iron', 89)]
+elements_years = [('hydrogen', 96), ('argon', 89), ('boron', 89), ('carbon', 96), ('neon', 96), ('silicon', 96), ('tungsten', 50), ('nitrogen', 96), ('lithium', 96), ('beryllium', 96), ('helium', 96), ('iron', 89)]
 
 db = adas.OpenAdas()
 
@@ -10,5 +10,5 @@ for element, year in elements_years:
     res = db.search_adf11(element, year)
 
     for r in res:
-        print r[1]
+        print(r[1])
         db.fetch(r, atomic_data)
