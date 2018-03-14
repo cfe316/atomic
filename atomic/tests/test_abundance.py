@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import atomic
+import atomic_neu as atomic
 
 class TestFractionalAbundance(unittest.TestCase):
     def setUp(self):

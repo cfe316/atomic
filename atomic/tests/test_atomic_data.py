@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import atomic
+import atomic_neu as atomic
 
 class TestAtomicData(unittest.TestCase):
     def test_element_data_names_abbreviated_and_long(self):

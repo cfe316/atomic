@@ -1,4 +1,5 @@
 import os
+from future.utils import iteritems
 
 extension_modules = {}
 directory = 'src/xxdata_11'
@@ -21,7 +22,7 @@ def configuration(parent_package='', top_path=None):
     config = Configuration('atomic', parent_package, top_path)
 
 
-    for module, values in extension_modules.iteritems():
+    for module, values in iteritems(extension_modules):
         directory = values['directory']
         sources = values['sources']
         sources = [os.path.join(directory, i) for i in sources]
@@ -33,4 +34,3 @@ def configuration(parent_package='', top_path=None):
 if __name__ == '__main__':
     from numpy.distutils.core import setup
     setup(**configuration(top_path='').todict())
-
