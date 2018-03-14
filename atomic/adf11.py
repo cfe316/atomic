@@ -7,6 +7,7 @@ detailed description of the possible subclasses.
 [2] http://www.adas.ac.uk/man/chap4-04.pdf
 """
 import os
+import numpy as np
 import _xxdata_11
 
 
@@ -18,6 +19,7 @@ adf11_classes = {
     'prb': 4,  # continuum radiation power
     'plt': 8,  # line radiation power
     'prc': 5,  # charge-exchange recombination radiation
+    'ecd': 12  # effective ionisation potential
 }
 
 
@@ -35,6 +37,16 @@ parameters = {
 
 
 class Adf11(object):
+    """Represents the data in an ADF11 file.
+
+     Attributes:
+         name (string): a filename
+         class_ (string): 'acd' or 'scd', ...
+         element (string): short element name like 'c' or 'ar'
+         _raw_return_value (tuple): the output of the filereading code.
+
+     """
+
     def __init__(self, name):
         if not os.path.isfile(name):
             raise IOError("no such file: '%s'" % name)
@@ -80,8 +92,15 @@ class Adf11(object):
         d['name'] = self.name
 
         # convert everything to SI + eV units
-        d['log_density'] += 6 # log(cm^-3) = log(10^6 m^-3) = 6 + log(m^-3)
-        d['log_coeff'] -= 6 # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
+        d['log_density'] += 6  # log(cm^-3) = log(10^6 m^-3) = 6 + log(m^-3)
+        d['log_coeff'] -= 6    # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
+        # the ecd (ionisation potential) class is already in eV units.
+        # admittedly this a cluge to store these non-rate-coefficient
+        # objects inside a RateCoefficient but it'll save a bunchton of code.
+        if self.class_ != 'ecd':
+            d['log_coeff'] -= 6  # log(m^3/s) = log(10^-6 m^3/s) = -6 + log(m^3/s)
+        else:
+            d['log_coeff'] = np.log10(d['log_coeff'][1:])
         return d
 
     def _sniff_class(self):
