@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import atomic.atomic as atomic
-reload(atomic)
-
 
 class AnnotateRight(object):
     def __init__(self, lines, texts, loc='last', ha=None, va='center'):
@@ -115,7 +112,7 @@ def time_dependent_z_Plot(solution, times, ensemble_average=False, plotIT=True, 
     Z_mean_ntau = {}
     for i, y in enumerate(solution.select_times(times)):
         nam = "Z_ne_taures_"+str(times[i] * solution.density)
-        print nam
+        print(nam)
         Z_mean_ntau[nam] = y.mean_charge()
         if plotIT:
             ax.loglog(solution.temperature, y.mean_charge(), color='black', ls='--')
@@ -132,7 +129,7 @@ def time_dependent_z_Plot(solution, times, ensemble_average=False, plotIT=True, 
 
     if write2HDF:
         import Misc.hickle.hickle as hkl
-        print 'START: HDF5 file save'
+        print('START: HDF5 file save')
         outDICT = {'temperature_arr': solution.temperature, 'coronal_Z': z_mean_coronal,
                    'Z_ntau_DIC': Z_mean_ntau}
         fnam = 'Zmeans_'+element+'.h5'
@@ -153,7 +150,7 @@ def time_dependent_power_Plot(solution, times, ensemble_average=False, plotIT=Tr
     Cooling_ntau = {}
     for i, y in enumerate(solution.select_times(times)):
         nam = "Cooling_ne_taures"+str(times[i] * solution.density)
-        print nam
+        print(nam)
         rad = atomic.Radiation(y)
         Cooling_ntau[nam] = rad.specific_power['total']
         if plotIT:
@@ -171,7 +168,7 @@ def time_dependent_power_Plot(solution, times, ensemble_average=False, plotIT=Tr
 
     if write2HDF:
         import Misc.hickle.hickle as hkl
-        print 'START: HDF5 file save'
+        print('START: HDF5 file save')
         outDICT = {'temperature_arr': solution.temperature, 'P_coronal': power_coronal,
                    'Cooling_ntau_DIC': Cooling_ntau}
         fnam = 'CoolingRate_'+element+'.h5'
