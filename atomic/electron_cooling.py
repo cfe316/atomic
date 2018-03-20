@@ -1,19 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from atomic_data import ZeroCoefficient
-from radiation import Radiation
+from .atomic_data import ZeroCoefficient
+from .radiation import Radiation
+from functools import reduce
 
-# This class is almost a copy of Radiation; only 
+
+# This class is almost a copy of Radiation; only
 # _get_staging_coeffs / _get_power_coeffs and _compute_power are different.
 class ElectronCooling(object):
     """
     Electron cooling power is radiation + ionisation - recombination.
 
-    This class calculates electron cooling power for an ionisation 
+    This class calculates electron cooling power for an ionisation
     stage distribution at given electron densities and temperatures.
 
     In collisional radiative equilibrium, ElectronCooling.power will
-    equal Radiation.power, since the same amount of ions are being 
+    equal Radiation.power, since the same amount of ions are being
     ionised and recombined each second.
 
     Attributes:
@@ -28,7 +30,7 @@ class ElectronCooling(object):
             n_n = n_e * neutral_fraction
     """
     def __init__(self, ionisation_stage_distribution, impurity_fraction=1.,
-            neutral_fraction=0.):
+                 neutral_fraction=0.):
         self.y = ionisation_stage_distribution
         self.atomic_data = ionisation_stage_distribution.atomic_data
 
@@ -41,8 +43,7 @@ class ElectronCooling(object):
         self.eV = 1.6e-19
 
         self.rad = Radiation(ionisation_stage_distribution, impurity_fraction,
-            neutral_fraction)
-
+                             neutral_fraction)
 
     @property
     def power(self):
@@ -80,7 +81,7 @@ class ElectronCooling(object):
         staging_coeffs = {}
         for key in ['ionisation', 'recombination', 'ionisation_potential']:
             staging_coeffs[key] = self.atomic_data.coeffs.get(key,
-                    ZeroCoefficient())
+                                                              ZeroCoefficient())
         return staging_coeffs
 
     def _compute_power(self):
@@ -98,15 +99,16 @@ class ElectronCooling(object):
 
         ne = self.electron_density
         ni = self.get_impurity_density()
-        y = self.y # a FractionalAbundance
+        y = self.y  # a FractionalAbundance
 
         for k in xrange(self.atomic_data.nuclear_charge):
             # in joules per ionisation stage transition
             # note that the temperature and density don't matter for the potential.
-            potential = self.eV * staging_coeffs['ionisation_potential'](k, self.temperature, self.electron_density)
+            potential = self.eV * staging_coeffs['ionisation_potential'](k, self.temperature,
+                                                                         self.electron_density)
             for key in staging_power_keys:
                 coeff = staging_coeffs[key](k, self.temperature,
-                        self.electron_density)
+                                            self.electron_density)
 
                 # somewhat ugly...
                 if key == 'recombination':
@@ -124,15 +126,14 @@ class ElectronCooling(object):
 
         # now get the radiation power.
         # gets a dict with keys line, continuum, cx, total
-        rad_power = self.rad._compute_power() 
+        rad_power = self.rad._compute_power()
         # save rad_total for later
         rad_total = rad_power.pop('total')
 
         # this is a Bad Idea on how to merge two dicts but oh well
         # http://stackoverflow.com/questions/38987/how-can-i-merge-two-python-dictionaries-in-a-single-expression
         cooling_power = dict(rad_power.items() + staging_power.items())
-        cooling_power['total'] = reduce(lambda x,y: x+y,
-                cooling_power.values())
+        cooling_power['total'] = reduce(lambda x, y: x+y, cooling_power.values())
         cooling_power['rad_total'] = rad_total
 
         return cooling_power

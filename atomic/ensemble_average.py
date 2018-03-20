@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import atomic_neu.atomic.radiation as radMOD
+
 
 class AnnotateRight(object):
     def __init__(self, lines, texts, loc='last', ha=None, va='center'):
@@ -85,11 +87,11 @@ def time_dependent_power_z(solution, times, f_imp=1., ensemble_average=False, co
         solution = solution.ensemble_average()
 
     for y in solution.select_times(times):
-        rad = atomic.Radiation(y, impurity_fraction=f_imp)
+        rad = radMOD.Radiation(y, impurity_fraction=f_imp)
 
     if coronal:
         z_mean = solution.y_coronal.mean_charge()
-        power = atomic.Radiation(solution.y_coronal,
+        power = radMOD.Radiation(solution.y_coronal,
                                  impurity_fraction=f_imp).specific_power['total']
     else:
         z_mean = y.mean_charge()

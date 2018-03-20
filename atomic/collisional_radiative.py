@@ -1,6 +1,6 @@
 import numpy as np
 
-from abundance import FractionalAbundance
+from .abundance import FractionalAbundance
 
 
 class CollRadEquilibrium(object):
@@ -8,8 +8,8 @@ class CollRadEquilibrium(object):
         self.atomic_data = atomic_data
         self.ionisation_coeff = atomic_data.coeffs['ionisation']  # RateCoefficient objects
         self.recombination_coeff = atomic_data.coeffs['recombination']
-        self.nuclear_charge = atomic_data.nuclear_charge  # could be generalized to include
-                                                          # metastables?
+        self.nuclear_charge = atomic_data.nuclear_charge    # could be generalized to include
+                                                            # metastables?
 
     def ionisation_stage_distribution(self, temperature, density):
         """Compute ionisation stage fractions for collrad equilibrium.
@@ -28,7 +28,7 @@ class CollRadEquilibrium(object):
             temperature = temperature * np.ones_like(density)
         y = np.zeros((self.nuclear_charge + 1, len(temperature)))
         y[0] = np.ones_like(temperature)
-        for k in xrange(self.nuclear_charge):
+        for k in range(self.nuclear_charge):
             S = self.ionisation_coeff(k, temperature, density)
             alpha = self.recombination_coeff(k, temperature, density)
             y[k+1] = y[k] * S / alpha

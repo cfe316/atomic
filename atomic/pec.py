@@ -3,14 +3,15 @@ import glob
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 import scipy.constants as constants
+from collections import defaultdict
 
-from adf15 import Adf15
-from atomic_data import RateCoefficient
+from .adf15 import Adf15
+from .atomic_data import RateCoefficient
 
 
 class Transition(object):
-    def __init__(self, type_, element, nuclear_charge, charge, wavelength,
-                 temperature, density, pec):
+    def __init__(self, type_, element, nuclear_charge, charge, wavelength, temperature,
+                 density, pec):
         self.element = element
         self.nuclear_charge = nuclear_charge
         self.charge = charge
@@ -34,9 +35,8 @@ class Transition(object):
         return self._on_new_grids(temperature_grid, density_grid, pec)
 
     def _on_new_grids(self, new_temperature, new_density, new_pec):
-        return self.__class__(self.type_, self.element, self.nuclear_charge,
-                self.charge, self.wavelength, new_temperature, new_density,
-                new_pec)
+        return self.__class__(self.type_, self.element, self.nuclear_charge, self.charge,
+                              self.wavelength, new_temperature, new_density, new_pec)
 
     @property
     def energy(self):
@@ -92,24 +92,24 @@ class TransitionPool(object):
             pec = d['pec']
             type_ = d['type']
 
-            t = Transition(type_, element, nuclear_charge, charge, wavelength,
-                    temperature, density, pec)
+            t = Transition(type_, element, nuclear_charge, charge, wavelength, temperature,
+                           density, pec)
             self.transitions.append(t)
 
     def filter_type(self, *type_names):
         names = self._interpret_type(*type_names)
-        new_transitions = filter(lambda t: t.type_ in names, self.transitions)
+        new_transitions = [t for t in self.transitions if t.type_ in names]
         return self.__class__(new_transitions)
 
     def filter_energy(self, lo, hi, unit='eV'):
         lo_ = lo * constants.elementary_charge
         hi_ = hi * constants.elementary_charge
         in_roi = lambda t: (lo_ <= t.energy) and (t.energy < hi_)
-        new_transitions = filter(in_roi, self.transitions)
+        new_transitions = list(filter(in_roi, self.transitions))
         return self.__class__(new_transitions)
 
     def _interpret_type(self, *type_names):
-        return map(self._figure_out_type, type_names)
+        return list(map(self._figure_out_type, type_names))
 
     def _figure_out_type(self, type_):
         if type_ in ['excitation', 'excit', 'ex']:
@@ -136,8 +136,7 @@ class TransitionPool(object):
         return power
 
     def interpolate(self, temperature_grid, density_grid):
-        new_transitions = [t.interpolate(temperature_grid, density_grid) for t
-                in self.transitions]
+        new_transitions = [t.interpolate(temperature_grid, density_grid) for t in self.transitions]
 
         return self.__class__(new_transitions)
 
@@ -168,7 +167,6 @@ def P_bremsstrahlung(k, Te, ne):
     return 1.53e-38 * Te**0.5 * (k + 1)**2
 
 
-from collections import defaultdict
 class CoefficientFactory(object):
     def __init__(self, atomic_data, transition_pool, clip_limit=1e-80):
         self.atomic_data = atomic_data
@@ -194,7 +192,8 @@ class CoefficientFactory(object):
     def _sort_by_ionisation_stages(self):
         d = defaultdict(TransitionPool)
         for t in self.transition_pool:
-            if not self._conforming(t): continue
+            if not self._conforming(t):
+                continue
 
             d[t.charge].transitions.append(t)
 
@@ -202,11 +201,10 @@ class CoefficientFactory(object):
 
     def _sum_transitions(self):
         coeffs = []
-        for i in xrange(self.nuclear_charge):
+        for i in range(self.nuclear_charge):
             c = self.ionisation_stages.get(i, None)
             if c is None:
-                pec = np.zeros(self.temperature_grid.shape +
-                        self.density_grid.shape)
+                pec = np.zeros(self.temperature_grid.shape + self.density_grid.shape)
             else:
                 c = c.interpolate(self.temperature_grid, self.density_grid)
                 pec = c.sum_transitions()
@@ -220,8 +218,8 @@ class CoefficientFactory(object):
         log_density = np.log10(self.density_grid)
         log_coeff = np.log10(coeffs)
 
-        self.rate_coefficients = RateCoefficient(self.nuclear_charge,
-                self.element, log_temperature, log_density, log_coeff)
+        self.rate_coefficients = RateCoefficient(self.nuclear_charge, self.element,
+                                                 log_temperature, log_density, log_coeff)
 
     def _conforming(self, t):
         return t.nuclear_charge == self.nuclear_charge

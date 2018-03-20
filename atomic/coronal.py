@@ -13,15 +13,14 @@ class CoronalEquilibrium(object):
     def ionisation_stage_distribution(self, temperature, density):
         y = np.zeros((self.nuclear_charge + 1, len(temperature)))
         y[0] = np.ones_like(temperature)
-        for k in xrange(self.nuclear_charge):
+        for k in range(self.nuclear_charge):
             S = self.ionisation_coeff(k, temperature, density)
             alpha = self.recombination_coeff(k, temperature, density)
             y[k+1] = y[k] * S / alpha
 
-        y /= y.sum(0) # fractional abundance
+        y /= y.sum(0)  # fractional abundance
         return FractionalAbundance(self.atomic_data, y, temperature, density)
 
 
 if __name__ == '__main__':
     pass
-
