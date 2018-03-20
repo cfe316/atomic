@@ -1,25 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-import atomic
+import atomic_neu.atomic as at
+import atomic_neu.atomic.coronal as cor
 
-elements = ['C', 'Ne', 'Ar']
+elements = ['C', 'Li', 'Si']
+elements = ['Si']
 
 temperature_ranges = {
-    'C'  : np.logspace(0,3, 300),
-    'Ne' : np.logspace(0,4, 300),
-    'Ar' : np.logspace(0,5, 300),
-}
+                     'C': np.logspace(0, 3, 300),
+                     'Li': np.logspace(0, 4, 300),
+                     'Si': np.logspace(0, 5, 300),
+                     }
 
 for element in elements:
-    ad = atomic.element(element)
-    coronal = atomic.CoronalEquilibrium(ad)
+    ad = at.element(element)
+    coronal = cor.CoronalEquilibrium(ad)
 
-    temperature = temperature_ranges.get(element, np.logspace(0, 3, 300))
+    temperature = temperature_ranges.get(element)
     y = coronal.ionisation_stage_distribution(temperature, density=1e19)
 
     plt.figure()
     y.plot_vs_temperature()
-    #plt.savefig('coronal_equilibrium_%s.pdf' % element)
+    # plt.savefig('coronal_equilibrium_%s.pdf' % element)
 
 plt.show()
