@@ -1,10 +1,11 @@
-import atomic
 import numpy as np
 import matplotlib.pyplot as plt
 
+import atomic_neu.atomic as at
 
-ad = atomic.element('carbon')
-temperature = np.logspace(0, 3, 100)
+
+ad = at.element('carbon')
+temperature = np.logspace(0, 5, 100)
 density = 1e19
 
 S = ad.coeffs['ionisation']
@@ -21,7 +22,7 @@ def annotate(element, lines, ind=-1):
 
 plt.figure(1)
 plt.clf()
-for i in xrange(ad.nuclear_charge):
+for i in range(ad.nuclear_charge):
     plt.loglog(temperature, S(i, temperature, density))
 plt.xlabel(r'$T_\mathrm{e}\ [\mathrm{eV}]$')
 plt.ylabel(r'$S\ [\mathrm{m^3 s^{-1}}]$')
@@ -34,7 +35,7 @@ plt.draw()
 
 plt.figure(2)
 plt.clf()
-for i in xrange(ad.nuclear_charge):
+for i in range(ad.nuclear_charge):
     plt.loglog(temperature, alpha(i, temperature, density))
 plt.xlabel(r'$T_\mathrm{e}\ [\mathrm{eV}]$')
 plt.ylabel(r'$\alpha\,[\mathrm{m^3 s^{-1}}]$')
