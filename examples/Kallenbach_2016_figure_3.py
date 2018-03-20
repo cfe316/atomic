@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 from collections import OrderedDict
 
-import atomic as at
+import atomic_neu.atomic as at
 
 elementColors = OrderedDict([
     ('argon', 'green'),
@@ -20,7 +20,7 @@ elementColors = OrderedDict([
 def Lz_radiated_power(rate_equations, taus, color):
     linestyles = ['dashed', 'solid', 'dashed']
     for i, tau in enumerate(taus):
-        print tau * 1e3
+        print(tau * 1e3)
         times = np.logspace(-7, np.log10(tau*1), 20)
         y = rt.solve(times, temperature, density, tau)
         rad = at.Radiation(y.abundances[-1])
