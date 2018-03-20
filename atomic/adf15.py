@@ -12,16 +12,16 @@ import _xxdata_15
 # values have been take from src/xxdata_15/test.for, and should be OK for
 # all files.
 parameters = {
-    'nstore': 500,
-    'nddim': 50,
-    'ntdim': 40,
-    'ndptnl': 4,
-    'ndptn': 128,
-    'ndptnc': 256,
-    'ndcnct' : 100,
-    'ndstack' : 40,
-    'ndcmt' : 2000,
-}
+            'nstore': 500,
+            'nddim': 50,
+            'ntdim': 40,
+            'ndptnl': 4,
+            'ndptn': 128,
+            'ndptnc': 256,
+            'ndcnct': 100,
+            'ndstack': 40,
+            'ndcmt': 2000,
+            }
 
 class Adf15(object):
     def __init__(self, name):
@@ -41,13 +41,13 @@ class Adf15(object):
 
         iunit = _xxdata_15.helper_open_file(self.name)
         dsname = os.path.basename(self.name)
-        ret =  _xxdata_15.xxdata_15(iunit, dsname, **parameters)
+        ret = _xxdata_15.xxdata_15(iunit, dsname, **parameters)
         _xxdata_15.helper_close_file(iunit)
 
         self._raw_return_value = ret
 
-        os.dup2(save, 1) # restore stdout
-        os.close(null_fds) # close the temporary fds
+        os.dup2(save, 1)    # restore stdout
+        os.close(null_fds)  # close the temporary fds
 
     def _convert_to_dictionary(self):
         ret = self._raw_return_value
@@ -88,9 +88,9 @@ class Adf15(object):
             b['type'] = ''.join(transition_types[i]).strip()
 
             # convert everything to SI + eV units
-            b['density'] *= 1e6 # cm^-3 = 10^6 m^-3
-            b['pec'] *= 1e-6 # cm^3/s = 10^-6 m^3/s
-            b['wavelength'] *= 1e-10 # A = 10^-10 m
+            b['density'] *= 1e6  # cm^-3 = 10^6 m^-3
+            b['pec'] *= 1e-6  # cm^3/s = 10^-6 m^3/s
+            b['wavelength'] *= 1e-10  # A = 10^-10 m
             datablocks.append(b)
 
         d['datablocks'] = datablocks
