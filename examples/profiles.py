@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 import atomic
 from ensemble_average import annotate_lines
 
+
 def parabolic_profile(y0):
     x = np.linspace(1., 0, 50)
     y = 1 - x**2
     y *= y0
     return x, y
+
 
 r, temperature = parabolic_profile(3e3)
 r, density = parabolic_profile(1e19)

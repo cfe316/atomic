@@ -20,15 +20,16 @@ if __name__ == '__main__':
 
     taus = np.array([1e14, 1e15, 1e16, 1e17, 1e18])/density
 
-    plt.figure(2); plt.clf()
+    plt.figure(2)
+    plt.clf()
     time_dependent_power(y, taus)
     plt.ylim(ymin=1e-35)
     plt.draw()
 
-    plt.figure(3); plt.clf()
+    plt.figure(3)
+    plt.clf()
     time_dependent_power(y, taus, ensemble_average=True)
     plt.ylim(ymin=1e-35)
     plt.draw()
-
 
     plt.show()
