@@ -21,7 +21,6 @@ def configuration(parent_package='', top_path=None):
     from numpy.distutils.misc_util import Configuration
     config = Configuration('atomic', parent_package, top_path)
 
-
     for module, values in iteritems(extension_modules):
         directory = values['directory']
         sources = values['sources']
