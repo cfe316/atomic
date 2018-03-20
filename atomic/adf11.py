@@ -77,8 +77,8 @@ class Adf11(object):
     def _convert_to_dictionary(self):
         ret = self._raw_return_value
         iz0, is1min, is1max, nptnl, nptn, nptnc, iptnla, iptna, iptnca, ncnct,\
-        icnctv, iblmx, ismax, dnr_ele, dnr_ams, isppr, ispbr, isstgr, idmax,\
-        itmax, ddens, dtev, drcof, lres, lstan, lptn = ret
+            icnctv, iblmx, ismax, dnr_ele, dnr_ams, isppr, ispbr, isstgr, idmax,\
+            itmax, ddens, dtev, drcof, lres, lstan, lptn = ret
 
         d = {}
         d['charge'] = iz0
