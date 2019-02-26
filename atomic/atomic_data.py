@@ -12,6 +12,7 @@ datatype_abbrevs = {
         'line_power' : 'plt',
         'cx_power' : 'prc',
         'ionisation_potential' : 'ecd',
+        'cx_cross_coupling' : 'ccd'
 }
 
 # The system of registering element names, symbols, years,
