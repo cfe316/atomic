@@ -17,6 +17,7 @@ import _xxdata_11
 adf11_classes = {
     'acd' : 1, # recombination coefficients
     'scd' : 2, # ionisation coefficients
+    'ccd' : 3, # CX recombination coefficients
     'prb' : 4, # continuum radiation power
     'plt' : 8, # line radiation power
     'prc' : 5, # charge-exchange recombination radiation

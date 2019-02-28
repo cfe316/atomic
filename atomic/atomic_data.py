@@ -12,11 +12,15 @@ datatype_abbrevs = {
         'line_power' : 'plt',
         'cx_power' : 'prc',
         'ionisation_potential' : 'ecd',
+        'cx_cross_coupling' : 'ccd'
 }
 
 # The system of registering element names, symbols, years,
 # and what datatypes they have could certainly be improved. However it works at the moment.
 # maybe with a pandas DataFrame?
+
+hydrogen_year = 96
+hydrogen_symbol = 'h'
 
 lithium_year = 96
 lithium_symbol = 'li'
@@ -62,6 +66,7 @@ def _element_data_dict(el_symbol, el_year, has_cx_power=False):
         data_dict.pop('cx_power', None)
     return data_dict
 
+hydrogen_data = _element_data_dict(hydrogen_symbol,  hydrogen_year)
 lithium_data  = _element_data_dict(lithium_symbol,  lithium_year)
 argon_data    = _element_data_dict(argon_symbol,    argon_year,  argon_has_cx_power)
 carbon_data   = _element_data_dict(carbon_symbol,   carbon_year, carbon_has_cx_power)
@@ -86,7 +91,9 @@ def _element_data(element):
     This could presumably be made more general, especially with automated lookup of files.
     """
     e = element.lower()
-    if e in ['li', 'lithium']:
+    if e in ['h', 'hydrogen']:
+        return hydrogen_data
+    elif e in ['li', 'lithium']:
         return lithium_data
     elif e in ['c', 'carbon']:
         return carbon_data
