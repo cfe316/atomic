@@ -3,9 +3,9 @@ import adas
 import tarfile
 
 atomic_data = './adas_data'
-elements_years = [('lithium', 96), ('carbon', 96),
+elements_years = [('hydrogen', 96), ('lithium', 96), ('carbon', 96),
                   ('argon', 89),   ('neon', 96), ('nitrogen', 96),
-                   ('beryllium', 96), ('boron', 89)]
+                   ('beryllium', 96), ('boron', 89), ('tungsten', 50)]
 
 db = adas.OpenAdas()
 

@@ -12,11 +12,15 @@ datatype_abbrevs = {
         'line_power' : 'plt',
         'cx_power' : 'prc',
         'ionisation_potential' : 'ecd',
+        'cx_cross_coupling' : 'ccd'
 }
 
 # The system of registering element names, symbols, years,
 # and what datatypes they have could certainly be improved. However it works at the moment.
 # maybe with a pandas DataFrame?
+
+hydrogen_year = 96
+hydrogen_symbol = 'h'
 
 lithium_year = 96
 lithium_symbol = 'li'
@@ -43,6 +47,9 @@ boron_year = 89
 boron_symbol = 'b'
 boron_has_cx_power = True
 
+tungsten_year = 50 
+tungsten_symbol = 'w'
+
 # imaginary element, for testing purposes
 imaginarium_year = 0
 imaginarium_data = {}
@@ -62,6 +69,7 @@ def _element_data_dict(el_symbol, el_year, has_cx_power=False):
         data_dict.pop('cx_power', None)
     return data_dict
 
+hydrogen_data = _element_data_dict(hydrogen_symbol,  hydrogen_year)
 lithium_data  = _element_data_dict(lithium_symbol,  lithium_year)
 argon_data    = _element_data_dict(argon_symbol,    argon_year,  argon_has_cx_power)
 carbon_data   = _element_data_dict(carbon_symbol,   carbon_year, carbon_has_cx_power)
@@ -69,6 +77,7 @@ nitrogen_data = _element_data_dict(nitrogen_symbol, nitrogen_year)
 neon_data     = _element_data_dict(neon_symbol,     neon_year)
 beryllium_data= _element_data_dict(beryllium_symbol,beryllium_year)
 boron_data    = _element_data_dict(boron_symbol,    boron_year)
+tungsten_data = _element_data_dict(tungsten_symbol, tungsten_year)
 
 def _element_data(element):
     """Give a dictionary of ADF11 file names available for the given element.
@@ -86,7 +95,9 @@ def _element_data(element):
     This could presumably be made more general, especially with automated lookup of files.
     """
     e = element.lower()
-    if e in ['li', 'lithium']:
+    if e in ['h', 'hydrogen']:
+        return hydrogen_data
+    elif e in ['li', 'lithium']:
         return lithium_data
     elif e in ['c', 'carbon']:
         return carbon_data
@@ -100,6 +111,8 @@ def _element_data(element):
         return beryllium_data
     elif e in ['b', 'boron']:
         return boron_data
+    elif e in ['w', 'tungsten']:
+        return tungsten_data
     else:
         raise NotImplementedError('unknown element: %s' % element)
 
@@ -185,7 +198,8 @@ class AtomicData(object):
         coefficients = {}
         for key, value in element_data.items():
             fullfilename = _full_path(value)
-            coefficients[key] = RateCoefficient.from_adf11(fullfilename)
+            if os.path.isfile(fullfilename):
+                coefficients[key] = RateCoefficient.from_adf11(fullfilename)
 
         return cls(coefficients)
 
