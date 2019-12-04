@@ -328,7 +328,7 @@ class ZeroCoefficient(RateCoefficient):
 
     def __call__(self, k, Te, ne):
         Te, ne = np.broadcast_arrays(Te, ne)
-        return float_info.min * np.ones_like(Te)
+        return np.full_like(Te, float_info.min, dtype=np.double)
 
 
 if __name__ == '__main__':
